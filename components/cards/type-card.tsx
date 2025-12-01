@@ -9,9 +9,10 @@ interface TypeCardProps {
 
 function getTypeColor(value: string): string {
   const colorMap: Record<string, string> = {
-    机房: "bg-amber-500/15 text-amber-500 border-amber-500/30",
-    商业: "bg-green-500/15 text-green-500 border-green-500/30",
-    住宅: "bg-cyan-500/15 text-cyan-500 border-cyan-500/30",
+    机房: "bg-red-600/15 text-red-600 border-red-600/30",
+    商业: "bg-amber-400/15 text-amber-400 border-amber-400/30",
+    住宅: "bg-green-500/15 text-green-500 border-green-500/30",
+    家宽: "bg-green-500/15 text-green-500 border-green-500/30",
     教育: "bg-blue-500/15 text-blue-500 border-blue-500/30",
     政府: "bg-purple-500/15 text-purple-500 border-purple-500/30",
     移动: "bg-rose-500/15 text-rose-500 border-rose-500/30",

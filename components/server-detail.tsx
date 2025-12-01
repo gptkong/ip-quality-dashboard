@@ -8,7 +8,7 @@ import { ScoreCard } from "./cards/score-card"
 import { FactorCard } from "./cards/factor-card"
 import { MediaCard } from "./cards/media-card"
 import { MailCard } from "./cards/mail-card"
-import { Clock, Terminal, Github, Globe2, Server, ShieldCheck, Fingerprint, Play, Mail } from "lucide-react"
+import { Clock, Globe2, Server, ShieldCheck, Fingerprint, Play, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ServerDetailProps {
@@ -66,25 +66,9 @@ export function ServerDetail({ server }: ServerDetailProps) {
     <div className="flex flex-col h-full">
       {/* Header Info */}
       <div className="shrink-0 px-6 pt-4 pb-3 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="mb-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5" />
-            <span className="text-xs">{head.Time}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Terminal className="h-3.5 w-3.5" />
-            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{head.Command}</code>
-          </div>
-          <a
-            href={head.GitHub}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 hover:text-primary transition-colors"
-          >
-            <Github className="h-3.5 w-3.5" />
-            <span className="text-xs">GitHub</span>
-          </a>
-          <span className="text-xs opacity-60">{head.Version}</span>
+        <div className="mb-3 flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Clock className="h-3.5 w-3.5" />
+          <span className="text-xs">{head.Time}</span>
         </div>
 
         {/* Tab Navigation */}
