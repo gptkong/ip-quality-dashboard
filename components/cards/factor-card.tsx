@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Fingerprint, Check, X, Minus } from "lucide-react"
+import { Check, X, Minus } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface FactorCardProps {
   factor: {
@@ -27,65 +27,81 @@ export function FactorCard({ factor }: FactorCardProps) {
   const providers = Object.keys(factor.Proxy)
 
   const getStatusIcon = (value: boolean | null) => {
-    if (value === null) return <Minus className="h-3 w-3 text-muted-foreground" />
-    if (value) return <X className="h-3 w-3 text-destructive" />
-    return <Check className="h-3 w-3 text-success" />
+    if (value === null) return <Minus className="h-3.5 w-3.5 text-muted-foreground" />
+    if (value) return <X className="h-3.5 w-3.5 text-red-500" />
+    return <Check className="h-3.5 w-3.5 text-green-500" />
+  }
+
+  const getStatusBg = (value: boolean | null) => {
+    if (value === null) return "bg-muted/50"
+    if (value) return "bg-red-500/10"
+    return "bg-green-500/10"
   }
 
   return (
-    <Card className="bg-card border-border lg:col-span-2">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Fingerprint className="h-4 w-4 text-primary" />
-          检测因素
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="pb-2 text-left text-xs font-medium text-muted-foreground">来源</th>
-                {factorKeys.map((key) => (
-                  <th key={key} className="pb-2 text-center text-xs font-medium text-muted-foreground">
-                    {factorLabels[key]}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {providers.map((provider) => (
-                <tr key={provider} className="border-b border-border/50 last:border-0">
-                  <td className="py-2 text-xs font-medium">{provider}</td>
-                  {factorKeys.map((key) => {
-                    const value = factor[key][provider as keyof typeof factor.Proxy]
-                    return (
-                      <td key={key} className="py-2 text-center">
-                        <div className="flex justify-center">{getStatusIcon(value as boolean | null)}</div>
-                      </td>
-                    )
-                  })}
-                </tr>
+    <div className="rounded-lg border border-border bg-card overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-muted/30">
+              <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground">数据源</th>
+              {factorKeys.map((key) => (
+                <th key={key} className="px-3 py-2.5 text-center text-xs font-medium text-muted-foreground">
+                  {factorLabels[key]}
+                </th>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          </thead>
+          <tbody>
+            {providers.map((provider, idx) => (
+              <tr
+                key={provider}
+                className={cn(
+                  "border-b border-border/50 last:border-0",
+                  idx % 2 === 0 ? "bg-transparent" : "bg-muted/20"
+                )}
+              >
+                <td className="px-4 py-2 text-xs font-medium">{provider}</td>
+                {factorKeys.map((key) => {
+                  const value = factor[key][provider as keyof typeof factor.Proxy]
+                  return (
+                    <td key={key} className="px-3 py-2 text-center">
+                      <div className={cn(
+                        "inline-flex items-center justify-center w-6 h-6 rounded-full",
+                        getStatusBg(value as boolean | null)
+                      )}>
+                        {getStatusIcon(value as boolean | null)}
+                      </div>
+                    </td>
+                  )
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground border-t border-border pt-3">
-          <div className="flex items-center gap-1.5">
-            <Check className="h-3 w-3 text-success" />
-            <span>未检测到</span>
+      {/* 图例 */}
+      <div className="flex items-center gap-4 px-4 py-2.5 text-xs text-muted-foreground border-t border-border bg-muted/20">
+        <div className="flex items-center gap-1.5">
+          <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center">
+            <Check className="h-3 w-3 text-green-500" />
           </div>
-          <div className="flex items-center gap-1.5">
-            <X className="h-3 w-3 text-destructive" />
-            <span>已检测到</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Minus className="h-3 w-3 text-muted-foreground" />
-            <span>无数据</span>
-          </div>
+          <span>安全</span>
         </div>
-      </CardContent>
-    </Card>
+        <div className="flex items-center gap-1.5">
+          <div className="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center">
+            <X className="h-3 w-3 text-red-500" />
+          </div>
+          <span>检测到</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-5 h-5 rounded-full bg-muted/50 flex items-center justify-center">
+            <Minus className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <span>无数据</span>
+        </div>
+      </div>
+    </div>
   )
 }
