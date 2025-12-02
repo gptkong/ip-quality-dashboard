@@ -7,7 +7,7 @@ import { useServers } from "@/hooks/use-servers"
 import { useToast } from "@/hooks/use-toast"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Server, RefreshCw } from "lucide-react"
-import type { ServerData } from "@/lib/mock-data"
+import type { ServerDataOrArray, ServerWithMeta } from "@/lib/mock-data"
 
 function ServerListSkeleton() {
   return (
@@ -77,7 +77,7 @@ function EmptyState({ onRefresh }: { onRefresh: () => void }) {
 export function DetectionDashboard() {
   const { servers, isLoading, error, refetch } = useServers()
   const { toast } = useToast()
-  const [selectedServer, setSelectedServer] = useState<ServerData | null>(null)
+  const [selectedServer, setSelectedServer] = useState<ServerWithMeta | null>(null)
 
   // Show error toast when error occurs
   useEffect(() => {
@@ -93,12 +93,9 @@ export function DetectionDashboard() {
   // Auto-select first server when data loads
   useEffect(() => {
     if (servers.length > 0 && !selectedServer) {
-      setSelectedServer(servers[0].data)
+      setSelectedServer(servers[0])
     }
   }, [servers, selectedServer])
-
-  // Convert ServerWithMeta[] to ServerData[] for ServerList
-  const serverDataList = servers.map((s) => s.data)
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
@@ -149,12 +146,12 @@ export function DetectionDashboard() {
         ) : (
           <>
             <ServerList
-              servers={serverDataList}
-              selectedServer={selectedServer || serverDataList[0]}
+              servers={servers}
+              selectedServer={selectedServer || servers[0]}
               onSelectServer={setSelectedServer}
             />
             <main className="flex-1 overflow-y-auto">
-              <ServerDetail server={selectedServer || serverDataList[0]} />
+              <ServerDetail serverData={(selectedServer || servers[0]).data} />
             </main>
           </>
         )}

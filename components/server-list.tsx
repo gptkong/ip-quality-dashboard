@@ -1,13 +1,26 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import type { ServerData } from "@/lib/mock-data"
+import type { ServerData, ServerDataOrArray, ServerWithMeta } from "@/lib/mock-data"
 import { Server, Globe, MapPin } from "lucide-react"
 
 interface ServerListProps {
-  servers: ServerData[]
-  selectedServer: ServerData
-  onSelectServer: (server: ServerData) => void
+  servers: ServerWithMeta[]
+  selectedServer: ServerWithMeta
+  onSelectServer: (server: ServerWithMeta) => void
+}
+
+// 获取第一个 IP 数据（用于显示）
+function getFirstData(data: ServerDataOrArray): ServerData {
+  if (Array.isArray(data) && data.length > 0 && 'Head' in data[0]) {
+    return data[0] as ServerData
+  }
+  return data as ServerData
+}
+
+// 判断是否为双栈
+function isDualStack(data: ServerDataOrArray): boolean {
+  return Array.isArray(data) && data.length > 1 && 'Head' in data[0]
 }
 
 export function ServerList({ servers, selectedServer, onSelectServer }: ServerListProps) {
@@ -17,10 +30,13 @@ export function ServerList({ servers, selectedServer, onSelectServer }: ServerLi
         <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">服务器列表</h2>
         <div className="space-y-2">
           {servers.map((server) => {
-            const isSelected = server.Head[0].IP === selectedServer.Head[0].IP
+            const firstData = getFirstData(server.data)
+            const ip = firstData.Head[0].IP
+            const isSelected = server.id === selectedServer.id
+            const hasDualStack = isDualStack(server.data)
             return (
               <button
-                key={server.Head[0].IP}
+                key={server.id}
                 onClick={() => onSelectServer(server)}
                 className={cn(
                   "w-full rounded-lg p-3 text-left transition-all",
@@ -39,15 +55,22 @@ export function ServerList({ servers, selectedServer, onSelectServer }: ServerLi
                     <Server className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-mono text-sm font-medium text-foreground truncate">{server.Head[0].IP}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-mono text-sm font-medium text-foreground truncate">{ip}</p>
+                      {hasDualStack && (
+                        <span className="shrink-0 px-1 py-0.5 text-[10px] font-medium rounded bg-purple-500/20 text-purple-400">
+                          双栈
+                        </span>
+                      )}
+                    </div>
                     <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Globe className="h-3 w-3" />
-                      <span className="truncate">{server.Info[0].Organization}</span>
+                      <span className="truncate">{firstData.Info[0].Organization}</span>
                     </div>
                     <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" />
                       <span>
-                        {server.Info[0].City.Name}, {server.Info[0].Region.Name}
+                        {firstData.Info[0].City.Name}, {firstData.Info[0].Region.Name}
                       </span>
                     </div>
                   </div>

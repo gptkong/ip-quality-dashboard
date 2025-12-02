@@ -43,8 +43,15 @@ fi
 
 echo "✅ 检测完成，准备上传..."
 
-# 构建请求 payload
-PAYLOAD=$(jq -n --arg id "$SERVER_ID" --slurpfile data "$RESULT_FILE" '{serverId: $id, data: $data[0]}')
+# 解析结果文件（支持双栈：多个 JSON 对象拼接）
+# jq -s 会将多个 JSON 对象合并为数组
+JSON_ARRAY=$(jq -s '.' "$RESULT_FILE")
+JSON_COUNT=$(echo "$JSON_ARRAY" | jq 'length')
+
+echo "   检测到 $JSON_COUNT 个 IP 结果（IPv4/IPv6）"
+
+# 构建请求 payload，发送整个数组
+PAYLOAD=$(echo "$JSON_ARRAY" | jq --arg id "$SERVER_ID" '{serverId: $id, data: .}')
 
 # 发送到 API
 RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL" \

@@ -715,10 +715,13 @@ export const mockServers: ServerData[] = [
 ]
 
 
+// 双栈数据类型：单个或多个检测结果
+export type ServerDataOrArray = ServerData | ServerData[];
+
 // 扩展类型定义 - 服务器数据带元数据
 export interface ServerWithMeta {
   id: string;           // 服务器唯一标识
-  data: ServerData;     // 完整检测数据
+  data: ServerDataOrArray;  // 完整检测数据（支持双栈）
   createdAt: string;    // 首次记录时间
   updatedAt: string;    // 最后更新时间
 }
@@ -726,7 +729,7 @@ export interface ServerWithMeta {
 // API 请求体类型
 export interface SubmitServerDataRequest {
   serverId: string;
-  data: ServerData;
+  data: ServerDataOrArray;  // 支持双栈
 }
 
 // API 响应类型

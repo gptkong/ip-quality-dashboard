@@ -1,6 +1,6 @@
 import { db, schema } from "./db";
 import { eq, desc } from "drizzle-orm";
-import type { ServerData, ServerWithMeta } from "./mock-data";
+import type { ServerDataOrArray, ServerWithMeta } from "./mock-data";
 
 const { servers, detectionRecords } = schema;
 
@@ -9,12 +9,13 @@ const { servers, detectionRecords } = schema;
  * - 如果服务器不存在，创建新服务器记录
  * - 如果服务器已存在，更新 updatedAt 时间戳
  * - 始终创建新的检测记录（保留历史）
+ * - 支持双栈数据（IPv4 + IPv6 数组）
  * 
  * @param serverId 服务器唯一标识
- * @param data 检测数据
+ * @param data 检测数据（单个或数组）
  * Requirements: 1.1, 1.4
  */
-export async function saveServerData(serverId: string, data: ServerData): Promise<void> {
+export async function saveServerData(serverId: string, data: ServerDataOrArray): Promise<void> {
   const now = new Date();
   
   // 检查服务器是否存在
@@ -78,7 +79,7 @@ export async function getAllServers(): Promise<ServerWithMeta[]> {
     if (latestRecord.length > 0) {
       result.push({
         id: server.id,
-        data: JSON.parse(latestRecord[0].data) as ServerData,
+        data: JSON.parse(latestRecord[0].data) as ServerDataOrArray,
         createdAt: server.createdAt.toISOString(),
         updatedAt: server.updatedAt.toISOString(),
       });
@@ -123,7 +124,7 @@ export async function getServerById(serverId: string): Promise<ServerWithMeta | 
   
   return {
     id: server.id,
-    data: JSON.parse(latestRecord[0].data) as ServerData,
+    data: JSON.parse(latestRecord[0].data) as ServerDataOrArray,
     createdAt: server.createdAt.toISOString(),
     updatedAt: server.updatedAt.toISOString(),
   };

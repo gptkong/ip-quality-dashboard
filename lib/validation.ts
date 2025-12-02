@@ -144,13 +144,28 @@ export function validateServerData(data: unknown): ValidationResult<ValidatedSer
   };
 }
 
+// 单个 IP 检测结果或多个（双栈）
+export const ServerDataArraySchema = z.union([
+  z.array(ServerDataSchema).min(1),    // 双栈：对象数组（优先匹配）
+  ServerDataSchema,                    // 单栈：单个对象
+]);
+
 // API 请求体验证 Schema
 export const SubmitServerDataRequestSchema = z.object({
   serverId: z.string().min(1, "serverId is required"),
-  data: ServerDataSchema,
+  data: ServerDataArraySchema,
 });
 
 export type SubmitServerDataRequest = z.infer<typeof SubmitServerDataRequestSchema>;
+
+/**
+ * 标准化服务器数据为数组格式
+ * @param data 单个或多个检测结果
+ * @returns 统一的数组格式
+ */
+export function normalizeServerData(data: ValidatedServerData | ValidatedServerData[]): ValidatedServerData[] {
+  return Array.isArray(data) && !('Head' in data) ? data : [data as ValidatedServerData];
+}
 
 /**
  * 验证提交服务器数据的请求
