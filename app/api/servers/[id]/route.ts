@@ -20,7 +20,7 @@ export async function GET(
     const { id } = await params;
     
     // Requirements 3.1: 获取服务器数据
-    const server = getServerById(id);
+    const server = await getServerById(id);
     
     if (!server) {
       // Requirements 3.2: 服务器不存在返回 404

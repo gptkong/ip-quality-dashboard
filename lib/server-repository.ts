@@ -14,38 +14,37 @@ const { servers, detectionRecords } = schema;
  * @param data 检测数据
  * Requirements: 1.1, 1.4
  */
-export function saveServerData(serverId: string, data: ServerData): void {
-  const now = new Date().toISOString();
+export async function saveServerData(serverId: string, data: ServerData): Promise<void> {
+  const now = new Date();
   
   // 检查服务器是否存在
-  const existingServer = db
+  const existingServer = await db
     .select()
     .from(servers)
     .where(eq(servers.id, serverId))
-    .get();
+    .limit(1);
   
-  if (existingServer) {
+  if (existingServer.length > 0) {
     // 更新服务器的 updatedAt 时间戳
-    db
+    await db
       .update(servers)
       .set({ updatedAt: now })
-      .where(eq(servers.id, serverId))
-      .run();
+      .where(eq(servers.id, serverId));
   } else {
     // 创建新服务器记录
-    db.insert(servers).values({
+    await db.insert(servers).values({
       id: serverId,
       createdAt: now,
       updatedAt: now,
-    }).run();
+    });
   }
   
   // 创建新的检测记录
-  db.insert(detectionRecords).values({
+  await db.insert(detectionRecords).values({
     serverId,
     data: JSON.stringify(data),
     createdAt: now,
-  }).run();
+  });
 }
 
 
@@ -57,33 +56,31 @@ export function saveServerData(serverId: string, data: ServerData): void {
  * @returns 服务器列表（带元数据）
  * Requirements: 2.1, 2.3
  */
-export function getAllServers(): ServerWithMeta[] {
+export async function getAllServers(): Promise<ServerWithMeta[]> {
   // 获取所有服务器，按更新时间降序排列
-  const allServers = db
+  const allServers = await db
     .select()
     .from(servers)
-    .orderBy(desc(servers.updatedAt))
-    .all();
+    .orderBy(desc(servers.updatedAt));
   
   // 为每个服务器获取最新的检测记录
   const result: ServerWithMeta[] = [];
   
   for (const server of allServers) {
     // 获取该服务器最新的检测记录
-    const latestRecord = db
+    const latestRecord = await db
       .select()
       .from(detectionRecords)
       .where(eq(detectionRecords.serverId, server.id))
       .orderBy(desc(detectionRecords.createdAt))
-      .limit(1)
-      .get();
+      .limit(1);
     
-    if (latestRecord) {
+    if (latestRecord.length > 0) {
       result.push({
         id: server.id,
-        data: JSON.parse(latestRecord.data) as ServerData,
-        createdAt: server.createdAt,
-        updatedAt: server.updatedAt,
+        data: JSON.parse(latestRecord[0].data) as ServerData,
+        createdAt: server.createdAt.toISOString(),
+        updatedAt: server.updatedAt.toISOString(),
       });
     }
   }
@@ -98,35 +95,36 @@ export function getAllServers(): ServerWithMeta[] {
  * @returns 服务器数据（带元数据），如果不存在返回 null
  * Requirements: 3.1
  */
-export function getServerById(serverId: string): ServerWithMeta | null {
+export async function getServerById(serverId: string): Promise<ServerWithMeta | null> {
   // 获取服务器基本信息
-  const server = db
+  const serverResult = await db
     .select()
     .from(servers)
     .where(eq(servers.id, serverId))
-    .get();
+    .limit(1);
   
-  if (!server) {
+  if (serverResult.length === 0) {
     return null;
   }
   
+  const server = serverResult[0];
+  
   // 获取最新的检测记录
-  const latestRecord = db
+  const latestRecord = await db
     .select()
     .from(detectionRecords)
     .where(eq(detectionRecords.serverId, serverId))
     .orderBy(desc(detectionRecords.createdAt))
-    .limit(1)
-    .get();
+    .limit(1);
   
-  if (!latestRecord) {
+  if (latestRecord.length === 0) {
     return null;
   }
   
   return {
     id: server.id,
-    data: JSON.parse(latestRecord.data) as ServerData,
-    createdAt: server.createdAt,
-    updatedAt: server.updatedAt,
+    data: JSON.parse(latestRecord[0].data) as ServerData,
+    createdAt: server.createdAt.toISOString(),
+    updatedAt: server.updatedAt.toISOString(),
   };
 }

@@ -73,7 +73,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SubmitSuc
     
     // Requirements 1.1, 1.4: 保存数据到数据库
     const { serverId, data } = validation.data!;
-    saveServerData(serverId, data);
+    await saveServerData(serverId, data);
     
     // 返回成功响应
     return NextResponse.json(
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SubmitSuc
 export async function GET(): Promise<NextResponse<ServerWithMeta[]>> {
   try {
     // Requirements 2.1, 2.3: 获取所有服务器，按更新时间降序排列
-    const servers = getAllServers();
+    const servers = await getAllServers();
     
     // Requirements 2.2: 空数据库返回空数组
     return NextResponse.json(servers);
