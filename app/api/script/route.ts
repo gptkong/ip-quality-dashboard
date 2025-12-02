@@ -44,8 +44,8 @@ echo "🔍 开始 IP 质量检测..."
 echo "   服务器 ID: $SERVER_ID"
 echo "   API 地址: $API_URL"
 
-# 运行检测脚本
-bash <(curl -Ls https://IP.Check.Place) -o "$RESULT_FILE"
+# 运行检测脚本（-y 自动安装依赖）
+bash <(curl -Ls https://IP.Check.Place) -y -o "$RESULT_FILE"
 
 # 检查结果文件
 if [ ! -f "$RESULT_FILE" ]; then
