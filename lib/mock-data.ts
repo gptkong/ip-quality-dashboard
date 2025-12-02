@@ -713,3 +713,38 @@ export const mockServers: ServerData[] = [
     ],
   },
 ]
+
+
+// 扩展类型定义 - 服务器数据带元数据
+export interface ServerWithMeta {
+  id: string;           // 服务器唯一标识
+  data: ServerData;     // 完整检测数据
+  createdAt: string;    // 首次记录时间
+  updatedAt: string;    // 最后更新时间
+}
+
+// API 请求体类型
+export interface SubmitServerDataRequest {
+  serverId: string;
+  data: ServerData;
+}
+
+// API 响应类型
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  details?: string[];
+}
+
+// 成功提交响应
+export interface SubmitSuccessResponse {
+  success: true;
+  id: string;
+}
+
+// 错误响应
+export interface ErrorResponse {
+  error: string;
+  details?: string[];
+}

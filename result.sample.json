@@ -1,0 +1,210 @@
+{
+  "Head": [
+    {
+      "IP": "47.238.*.*",
+      "Command": "bash <(curl -sL https://Check.Place) -I",
+      "GitHub": "https://github.com/xykt/IPQuality",
+      "Time": "报告时间：2025-12-01 17:29:37 CST",
+      "Version": "脚本版本：v2025-12-01"
+    }
+  ],
+  "Info": [
+    {
+      "ASN": "45102",
+      "Organization": "Alibaba US Technology Co., Ltd.",
+      "Latitude": "22.2842",
+      "Longitude": "114.1759",
+      "DMS": "114°10′33″E, 22°17′3″N",
+      "Map": "https://check.place/22.2842,114.1759,15,cn",
+      "TimeZone": "Asia/Hong_Kong",
+      "City": {
+        "Name": "香港",
+        "PostalCode": "null",
+        "SubCode": "N/A",
+        "Subdivisions": "N/A"
+      },
+      "Region": {
+        "Code": "HK",
+        "Name": "香港"
+      },
+      "Continent": {
+        "Code": "AS",
+        "Name": "亚洲"
+      },
+      "RegisteredRegion": {
+        "Code": "US",
+        "Name": "美国"
+      },
+      "Type": "广播IP"
+    }
+  ],
+  "Type": [
+    {
+      "Usage": {
+        "IPinfo": "机房",
+        "ipregistry": "机房",
+        "ipapi": "商业",
+        "AbuseIPDB": "机房",
+        "IP2LOCATION": "机房"
+      },
+      "Company": {
+        "IPinfo": "机房",
+        "ipregistry": "机房",
+        "ipapi": "机房"
+      }
+    }
+  ],
+  "Score": [
+    {
+      "IP2LOCATION": "3",
+      "SCAMALYTICS": "0",
+      "ipapi": "0.95%",
+      "AbuseIPDB": "0",
+      "IPQS": "null",
+      "DBIP": "0"
+    }
+  ],
+  "Factor": [
+    {
+      "CountryCode": {
+        "IP2LOCATION": "HK",
+        "ipapi": "HK",
+        "ipregistry": "CN",
+        "IPQS": "HK",
+        "SCAMALYTICS": "HK",
+        "ipdata": "HK",
+        "IPinfo": "HK",
+        "IPWHOIS": "HK",
+        "DBIP": "HK"
+      },
+      "Proxy": {
+        "IP2LOCATION": false,
+        "ipapi": false,
+        "ipregistry": false,
+        "IPQS": true,
+        "SCAMALYTICS": false,
+        "ipdata": false,
+        "IPinfo": false,
+        "IPWHOIS": false,
+        "DBIP": false
+      },
+      "Tor": {
+        "IP2LOCATION": false,
+        "ipapi": false,
+        "ipregistry": false,
+        "IPQS": false,
+        "SCAMALYTICS": false,
+        "ipdata": false,
+        "IPinfo": false,
+        "IPWHOIS": false,
+        "DBIP": null
+      },
+      "VPN": {
+        "IP2LOCATION": false,
+        "ipapi": false,
+        "ipregistry": false,
+        "IPQS": true,
+        "SCAMALYTICS": false,
+        "ipdata": null,
+        "IPinfo": false,
+        "IPWHOIS": false,
+        "DBIP": null
+      },
+      "Server": {
+        "IP2LOCATION": true,
+        "ipapi": true,
+        "ipregistry": true,
+        "IPQS": null,
+        "SCAMALYTICS": false,
+        "ipdata": false,
+        "IPinfo": true,
+        "IPWHOIS": true,
+        "DBIP": null
+      },
+      "Abuser": {
+        "IP2LOCATION": false,
+        "ipapi": false,
+        "ipregistry": false,
+        "IPQS": false,
+        "SCAMALYTICS": false,
+        "ipdata": false,
+        "IPinfo": null,
+        "IPWHOIS": null,
+        "DBIP": false
+      },
+      "Robot": {
+        "IP2LOCATION": false,
+        "ipapi": false,
+        "ipregistry": null,
+        "IPQS": false,
+        "SCAMALYTICS": false,
+        "ipdata": null,
+        "IPinfo": null,
+        "IPWHOIS": null,
+        "DBIP": false
+      }
+    }
+  ],
+  "Media": [
+    {
+      "TikTok": {
+        "Status": "解锁",
+        "Region": "ALISG",
+        "Type": "原生"
+      },
+      "DisneyPlus": {
+        "Status": "屏蔽",
+        "Region": "",
+        "Type": ""
+      },
+      "Netflix": {
+        "Status": "解锁",
+        "Region": "HK",
+        "Type": "原生"
+      },
+      "Youtube": {
+        "Status": "解锁",
+        "Region": "HK",
+        "Type": "原生"
+      },
+      "AmazonPrimeVideo": {
+        "Status": "解锁",
+        "Region": "HK",
+        "Type": "原生"
+      },
+      "Spotify": {
+        "Status": "解锁",
+        "Region": "HK",
+        "Type": "原生"
+      },
+      "ChatGPT": {
+        "Status": "仅APP",
+        "Region": "HK",
+        "Type": "原生"
+      }
+    }
+  ],
+  "Mail": [
+    {
+      "Port25": false,
+      "Gmail": false,
+      "Outlook": false,
+      "Yahoo": false,
+      "Apple": false,
+      "QQ": false,
+      "MailRU": false,
+      "AOL": false,
+      "GMX": false,
+      "MailCOM": false,
+      "163": false,
+      "Sohu": false,
+      "Sina": false,
+      "DNSBlacklist": {
+        "Total": 439,
+        "Clean": 416,
+        "Marked": 23,
+        "Blacklisted": 0
+      }
+    }
+  ]
+}

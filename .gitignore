@@ -42,4 +42,8 @@ coverage/
 # Misc
 *.pem
 
+# Database
+data/
+
 .vscode/
+.kiro/
