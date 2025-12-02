@@ -9,6 +9,7 @@ interface ServerListProps {
   servers: ServerWithMeta[]
   selectedServer: ServerWithMeta
   onSelectServer: (server: ServerWithMeta) => void
+  isMobile?: boolean
 }
 
 // 获取第一个 IP 数据（用于显示）
@@ -24,9 +25,12 @@ function isDualStack(data: ServerDataOrArray): boolean {
   return Array.isArray(data) && data.length > 1 && 'Head' in data[0]
 }
 
-export function ServerList({ servers, selectedServer, onSelectServer }: ServerListProps) {
+export function ServerList({ servers, selectedServer, onSelectServer, isMobile }: ServerListProps) {
   return (
-    <aside className="w-72 shrink-0 border-r border-border bg-sidebar">
+    <aside className={cn(
+      "shrink-0 bg-sidebar",
+      isMobile ? "w-full h-full" : "w-72 border-r border-border"
+    )}>
       <ScrollArea className="h-full">
       <div className="p-4">
         <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">服务器列表</h2>

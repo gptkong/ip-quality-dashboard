@@ -6,12 +6,13 @@ import { ServerDetail } from "./server-detail"
 import { useServers } from "@/hooks/use-servers"
 import { useToast } from "@/hooks/use-toast"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Server, RefreshCw } from "lucide-react"
-import type { ServerDataOrArray, ServerWithMeta } from "@/lib/mock-data"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Server, RefreshCw, Menu, ChevronLeft, ChevronRight } from "lucide-react"
+import type { ServerWithMeta } from "@/lib/mock-data"
 
 function ServerListSkeleton() {
   return (
-    <aside className="w-72 shrink-0 border-r border-border bg-sidebar overflow-y-auto">
+    <aside className="hidden md:block w-72 shrink-0 border-r border-border bg-sidebar overflow-y-auto">
       <div className="p-4">
         <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">服务器列表</h2>
         <div className="space-y-2">
@@ -78,6 +79,7 @@ export function DetectionDashboard() {
   const { servers, isLoading, error, refetch } = useServers()
   const { toast } = useToast()
   const [selectedServer, setSelectedServer] = useState<ServerWithMeta | null>(null)
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   // Show error toast when error occurs
   useEffect(() => {
@@ -97,13 +99,43 @@ export function DetectionDashboard() {
     }
   }, [servers, selectedServer])
 
+  const currentIndex = selectedServer ? servers.findIndex(s => s.id === selectedServer.id) : 0
+  const canGoPrev = currentIndex > 0
+  const canGoNext = currentIndex < servers.length - 1
+
+  const goToPrev = () => {
+    if (canGoPrev) setSelectedServer(servers[currentIndex - 1])
+  }
+  const goToNext = () => {
+    if (canGoNext) setSelectedServer(servers[currentIndex + 1])
+  }
+
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <header className="shrink-0 border-b border-border px-6 py-4">
+      <header className="shrink-0 border-b border-border px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20">
-              <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* 移动端菜单按钮 */}
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <button className="md:hidden p-1.5 rounded-md hover:bg-muted transition-colors">
+                  <Menu className="h-5 w-5 text-muted-foreground" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 p-0">
+                <ServerList
+                  servers={servers}
+                  selectedServer={selectedServer || servers[0]}
+                  onSelectServer={(server) => {
+                    setSelectedServer(server)
+                    setSheetOpen(false)
+                  }}
+                  isMobile
+                />
+              </SheetContent>
+            </Sheet>
+            <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg bg-primary/20">
+              <svg className="h-4 w-4 md:h-5 md:w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -112,13 +144,13 @@ export function DetectionDashboard() {
                 />
               </svg>
             </div>
-            <h1 className="text-xl font-semibold text-foreground">IP 质量检测</h1>
+            <h1 className="text-base md:text-xl font-semibold text-foreground">IP 质量检测</h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {isLoading ? (
-              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-16 md:w-20" />
             ) : (
-              <span className="text-sm text-muted-foreground">{servers.length} 台服务器</span>
+              <span className="hidden sm:inline text-sm text-muted-foreground">{servers.length} 台服务器</span>
             )}
             <button
               onClick={refetch}
@@ -145,13 +177,42 @@ export function DetectionDashboard() {
           <EmptyState onRefresh={refetch} />
         ) : (
           <>
-            <ServerList
-              servers={servers}
-              selectedServer={selectedServer || servers[0]}
-              onSelectServer={setSelectedServer}
-            />
-            <main className="flex-1 overflow-hidden">
-              <ServerDetail serverData={(selectedServer || servers[0]).data} />
+            {/* 桌面端侧边栏 */}
+            <div className="hidden md:block">
+              <ServerList
+                servers={servers}
+                selectedServer={selectedServer || servers[0]}
+                onSelectServer={setSelectedServer}
+              />
+            </div>
+            <main className="flex-1 overflow-hidden flex flex-col">
+              <div className="flex-1 min-h-0">
+                <ServerDetail serverData={(selectedServer || servers[0]).data} />
+              </div>
+              {/* 移动端底部导航 */}
+              <div className="md:hidden shrink-0 border-t border-border bg-background px-4 py-3">
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={goToPrev}
+                    disabled={!canGoPrev}
+                    className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-md hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    上一个
+                  </button>
+                  <span className="text-xs text-muted-foreground">
+                    {currentIndex + 1} / {servers.length}
+                  </span>
+                  <button
+                    onClick={goToNext}
+                    disabled={!canGoNext}
+                    className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-md hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    下一个
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
             </main>
           </>
         )}

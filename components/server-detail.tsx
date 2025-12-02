@@ -90,7 +90,7 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header Info */}
-      <div className="shrink-0 px-6 pt-4 pb-3 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <div className="shrink-0 px-4 md:px-6 pt-3 md:pt-4 pb-3 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         {/* IPv4/IPv6 切换 tabs（双栈时显示） */}
         {isDualStack && (
           <div className="mb-3 flex items-center gap-2">
@@ -152,7 +152,7 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
       {/* Scrollable Content */}
       <div className="flex-1 min-h-0">
         <ScrollArea className="h-full" ref={scrollContainerRef}>
-          <div className="p-6 space-y-6">
+          <div className="p-4 md:p-6 space-y-4 md:space-y-6">
           <section ref={(el) => { sectionRefs.current["info"] = el }} className="scroll-mt-4">
             <InfoCard info={server.Info[0]} />
           </section>
