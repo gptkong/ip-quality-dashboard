@@ -1,5 +1,38 @@
 import { z } from "zod";
 
+/**
+ * 移除字符串中的 ANSI 转义序列（shell 颜色代码）
+ * 例如: "\u001b[31mCN\u001b[32m" -> "CN"
+ */
+function stripAnsiCodes(str: string): string {
+  // 匹配 ANSI 转义序列：\u001b[Xm 或 \x1b[Xm 格式
+  // 也处理不完整的格式如 \u001b31m（缺少 [）
+  return str.replace(/\u001b\[?\d*m|\x1b\[?\d*m/g, '');
+}
+
+/**
+ * 递归清理对象中所有字符串的 ANSI 转义序列
+ */
+function sanitizeAnsiCodes<T>(data: T): T {
+  if (typeof data === 'string') {
+    return stripAnsiCodes(data) as T;
+  }
+  
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizeAnsiCodes(item)) as T;
+  }
+  
+  if (data !== null && typeof data === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data)) {
+      result[key] = sanitizeAnsiCodes(value);
+    }
+    return result as T;
+  }
+  
+  return data;
+}
+
 // Head 数组项验证
 const HeadItemSchema = z.object({
   IP: z.string(),
@@ -123,7 +156,9 @@ export type ValidatedServerData = z.infer<typeof ServerDataSchema>;
  * @returns 验证结果，包含成功标志、验证后的数据或错误信息
  */
 export function validateServerData(data: unknown): ValidationResult<ValidatedServerData> {
-  const result = ServerDataSchema.safeParse(data);
+  // 先清理 ANSI 转义序列
+  const sanitizedData = sanitizeAnsiCodes(data);
+  const result = ServerDataSchema.safeParse(sanitizedData);
   
   if (result.success) {
     return {
@@ -173,7 +208,9 @@ export function normalizeServerData(data: ValidatedServerData | ValidatedServerD
  * @returns 验证结果
  */
 export function validateSubmitRequest(data: unknown): ValidationResult<SubmitServerDataRequest> {
-  const result = SubmitServerDataRequestSchema.safeParse(data);
+  // 先清理 ANSI 转义序列
+  const sanitizedData = sanitizeAnsiCodes(data);
+  const result = SubmitServerDataRequestSchema.safeParse(sanitizedData);
   
   if (result.success) {
     return {
