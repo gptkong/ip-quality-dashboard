@@ -50,7 +50,7 @@ const ScoreItemSchema = z.record(z.string(), z.string());
 
 // Factor 数组项验证
 const FactorItemSchema = z.object({
-  CountryCode: z.record(z.string(), z.string()),
+  CountryCode: z.record(z.string(), z.string().nullable()),
   Proxy: z.record(z.string(), z.boolean().nullable()),
   Tor: z.record(z.string(), z.boolean().nullable()),
   VPN: z.record(z.string(), z.boolean().nullable()),
