@@ -10,6 +10,7 @@ import { MediaCard } from "./cards/media-card"
 import { MailCard } from "./cards/mail-card"
 import { Clock, Globe2, Server, ShieldCheck, Fingerprint, Play, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface ServerDetailProps {
   serverData: ServerDataOrArray
@@ -87,7 +88,7 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
   }, [activeIpIndex])
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Header Info */}
       <div className="shrink-0 px-6 pt-4 pb-3 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         {/* IPv4/IPv6 切换 tabs（双栈时显示） */}
@@ -149,8 +150,9 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
       </div>
 
       {/* Scrollable Content */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
-        <div className="p-6 space-y-6">
+      <div className="flex-1 min-h-0">
+        <ScrollArea className="h-full" ref={scrollContainerRef}>
+          <div className="p-6 space-y-6">
           <section ref={(el) => { sectionRefs.current["info"] = el }} className="scroll-mt-4">
             <InfoCard info={server.Info[0]} />
           </section>
@@ -174,7 +176,8 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
           <section ref={(el) => { sectionRefs.current["mail"] = el }} className="scroll-mt-4">
             <MailCard mail={server.Mail[0]} />
           </section>
-        </div>
+          </div>
+        </ScrollArea>
       </div>
     </div>
   )

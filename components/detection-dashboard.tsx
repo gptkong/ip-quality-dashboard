@@ -137,7 +137,7 @@ export function DetectionDashboard() {
         {isLoading ? (
           <>
             <ServerListSkeleton />
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-hidden">
               <ServerDetailSkeleton />
             </main>
           </>
@@ -150,7 +150,7 @@ export function DetectionDashboard() {
               selectedServer={selectedServer || servers[0]}
               onSelectServer={setSelectedServer}
             />
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-hidden">
               <ServerDetail serverData={(selectedServer || servers[0]).data} />
             </main>
           </>

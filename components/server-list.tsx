@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils"
 import type { ServerData, ServerDataOrArray, ServerWithMeta } from "@/lib/mock-data"
 import { Server, Globe, MapPin } from "lucide-react"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface ServerListProps {
   servers: ServerWithMeta[]
@@ -25,7 +26,8 @@ function isDualStack(data: ServerDataOrArray): boolean {
 
 export function ServerList({ servers, selectedServer, onSelectServer }: ServerListProps) {
   return (
-    <aside className="w-72 shrink-0 border-r border-border bg-sidebar overflow-y-auto">
+    <aside className="w-72 shrink-0 border-r border-border bg-sidebar">
+      <ScrollArea className="h-full">
       <div className="p-4">
         <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">服务器列表</h2>
         <div className="space-y-2">
@@ -80,6 +82,7 @@ export function ServerList({ servers, selectedServer, onSelectServer }: ServerLi
           })}
         </div>
       </div>
+      </ScrollArea>
     </aside>
   )
 }
