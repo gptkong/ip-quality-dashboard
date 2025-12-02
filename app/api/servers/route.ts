@@ -64,9 +64,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<SubmitSuc
         );
       }
       
-      // Requirements 1.3: 数据验证失败返回 400
+      // Requirements 1.3: 数据验证失败返回 400，包含详细错误信息
       return NextResponse.json(
-        { error: "Validation failed", details: validation.errors },
+        { 
+          error: "Validation failed", 
+          details: validation.errors,
+          hint: "请检查数据格式是否符合要求，常见问题：Mail字段应为boolean或null，Score字段应为string"
+        },
         { status: 400 }
       );
     }

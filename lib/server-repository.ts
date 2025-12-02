@@ -12,10 +12,11 @@ const { servers, detectionRecords } = schema;
  * - 支持双栈数据（IPv4 + IPv6 数组）
  * 
  * @param serverId 服务器唯一标识
- * @param data 检测数据（单个或数组）
+ * @param data 检测数据（单个或数组），已通过验证
  * Requirements: 1.1, 1.4
  */
-export async function saveServerData(serverId: string, data: ServerDataOrArray): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function saveServerData(serverId: string, data: any): Promise<void> {
   const now = new Date();
   
   // 检查服务器是否存在

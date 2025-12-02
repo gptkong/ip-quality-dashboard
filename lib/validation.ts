@@ -81,7 +81,7 @@ const TypeItemSchema = z.object({
 // Score 数组项验证
 const ScoreItemSchema = z.record(z.string(), z.string());
 
-// Factor 数组项验证
+// Factor 数组项验证（CountryCode 也允许 null 值）
 const FactorItemSchema = z.object({
   CountryCode: z.record(z.string(), z.string().nullable()),
   Proxy: z.record(z.string(), z.boolean().nullable()),
@@ -111,21 +111,21 @@ const DNSBlacklistSchema = z.object({
   Blacklisted: z.number(),
 });
 
-// Mail 数组项验证
+// Mail 数组项验证（所有邮件字段允许 null）
 const MailItemSchema = z.object({
-  Port25: z.boolean(),
-  Gmail: z.boolean(),
-  Outlook: z.boolean(),
-  Yahoo: z.boolean(),
-  Apple: z.boolean(),
-  QQ: z.boolean(),
-  MailRU: z.boolean(),
-  AOL: z.boolean(),
-  GMX: z.boolean(),
-  MailCOM: z.boolean(),
-  "163": z.boolean(),
-  Sohu: z.boolean(),
-  Sina: z.boolean(),
+  Port25: z.boolean().nullable(),
+  Gmail: z.boolean().nullable(),
+  Outlook: z.boolean().nullable(),
+  Yahoo: z.boolean().nullable(),
+  Apple: z.boolean().nullable(),
+  QQ: z.boolean().nullable(),
+  MailRU: z.boolean().nullable(),
+  AOL: z.boolean().nullable(),
+  GMX: z.boolean().nullable(),
+  MailCOM: z.boolean().nullable(),
+  "163": z.boolean().nullable(),
+  Sohu: z.boolean().nullable(),
+  Sina: z.boolean().nullable(),
   DNSBlacklist: DNSBlacklistSchema,
 });
 
@@ -203,9 +203,32 @@ export function normalizeServerData(data: ValidatedServerData | ValidatedServerD
 }
 
 /**
+ * 格式化验证错误，提供更详细的信息
+ */
+function formatValidationError(err: z.ZodIssue): string {
+  const path = err.path.join(".");
+  const code = err.code;
+  
+  let detail = err.message;
+  
+  // 根据错误类型提供更具体的信息
+  if (code === 'invalid_type') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const issue = err as any;
+    detail = `期望类型 ${issue.expected}，实际收到 ${issue.received}`;
+  } else if (code === 'invalid_union') {
+    detail = '数据不匹配任何有效格式';
+  } else if (code === 'too_small') {
+    detail = '数组不能为空';
+  }
+  
+  return path ? `${path}: ${detail}` : detail;
+}
+
+/**
  * 验证提交服务器数据的请求
  * @param data 待验证的请求数据
- * @returns 验证结果
+ * @returns 验证结果，包含详细的错误路径和类型信息
  */
 export function validateSubmitRequest(data: unknown): ValidationResult<SubmitServerDataRequest> {
   // 先清理 ANSI 转义序列
@@ -219,13 +242,14 @@ export function validateSubmitRequest(data: unknown): ValidationResult<SubmitSer
     };
   }
   
-  const errors = result.error.errors.map((err) => {
-    const path = err.path.join(".");
-    return path ? `${path}: ${err.message}` : err.message;
-  });
+  // 提取详细错误信息
+  const errors = result.error.errors.map(formatValidationError);
+  
+  // 去重并限制错误数量
+  const uniqueErrors = [...new Set(errors)].slice(0, 10);
   
   return {
     success: false,
-    errors,
+    errors: uniqueErrors,
   };
 }
