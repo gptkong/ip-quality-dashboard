@@ -4,6 +4,31 @@ import { saveServerData, getAllServers } from "@/lib/server-repository";
 import type { SubmitSuccessResponse, ErrorResponse, ServerWithMeta } from "@/lib/mock-data";
 
 /**
+ * 验证 Authorization Header
+ * 格式: Bearer <token>
+ */
+function validateAuth(request: NextRequest): boolean {
+  const authHeader = request.headers.get("Authorization");
+  const expectedToken = process.env.API_AUTH_TOKEN;
+  
+  // 如果未配置 token，跳过鉴权（开发环境）
+  if (!expectedToken) {
+    return true;
+  }
+  
+  if (!authHeader) {
+    return false;
+  }
+  
+  // 支持 "Bearer <token>" 格式
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : authHeader;
+  
+  return token === expectedToken;
+}
+
+/**
  * POST /api/servers
  * 提交服务器检测数据
  * 
@@ -11,6 +36,14 @@ import type { SubmitSuccessResponse, ErrorResponse, ServerWithMeta } from "@/lib
  */
 export async function POST(request: NextRequest): Promise<NextResponse<SubmitSuccessResponse | ErrorResponse>> {
   try {
+    // 验证鉴权
+    if (!validateAuth(request)) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    
     // 解析请求体
     const body = await request.json();
     
