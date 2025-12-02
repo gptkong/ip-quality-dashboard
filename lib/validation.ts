@@ -203,26 +203,152 @@ export function normalizeServerData(data: ValidatedServerData | ValidatedServerD
 }
 
 /**
+ * 字段名称中文映射
+ */
+const FIELD_NAME_MAP: Record<string, string> = {
+  serverId: '服务器ID',
+  data: '检测数据',
+  Head: '头部信息',
+  Info: '基础信息',
+  Type: '类型信息',
+  Score: '评分信息',
+  Factor: '风险因子',
+  Media: '流媒体解锁',
+  Mail: '邮件检测',
+  IP: 'IP地址',
+  Command: '命令',
+  GitHub: 'GitHub链接',
+  Time: '时间',
+  Version: '版本',
+  ASN: 'ASN编号',
+  Organization: '组织',
+  Latitude: '纬度',
+  Longitude: '经度',
+  DMS: '度分秒坐标',
+  Map: '地图链接',
+  TimeZone: '时区',
+  City: '城市',
+  Region: '地区',
+  Continent: '大洲',
+  RegisteredRegion: '注册地区',
+  Name: '名称',
+  PostalCode: '邮编',
+  SubCode: '子区域代码',
+  Subdivisions: '行政区划',
+  Code: '代码',
+  Usage: '用途类型',
+  Company: '公司类型',
+  CountryCode: '国家代码',
+  Proxy: '代理检测',
+  Tor: 'Tor检测',
+  VPN: 'VPN检测',
+  Server: '服务器检测',
+  Abuser: '滥用检测',
+  Robot: '机器人检测',
+  Status: '状态',
+  DNSBlacklist: 'DNS黑名单',
+  Total: '总数',
+  Clean: '干净',
+  Marked: '标记',
+  Blacklisted: '黑名单',
+  Port25: '端口25',
+};
+
+/**
+ * 类型名称中文映射
+ */
+const TYPE_NAME_MAP: Record<string, string> = {
+  string: '字符串',
+  number: '数字',
+  boolean: '布尔值',
+  object: '对象',
+  array: '数组',
+  null: '空值',
+  undefined: '未定义',
+};
+
+/**
+ * 将路径转换为可读的中文描述
+ */
+function formatPath(path: (string | number)[]): string {
+  if (path.length === 0) return '';
+  
+  const parts = path.map((p, index) => {
+    if (typeof p === 'number') {
+      return `第${p + 1}项`;
+    }
+    const chineseName = FIELD_NAME_MAP[p];
+    if (chineseName) {
+      return index === 0 ? chineseName : chineseName;
+    }
+    return p;
+  });
+  
+  return parts.join(' → ');
+}
+
+/**
+ * 翻译类型名称
+ */
+function translateType(type: string): string {
+  return TYPE_NAME_MAP[type] || type;
+}
+
+/**
  * 格式化验证错误，提供更详细的信息
  */
 function formatValidationError(err: z.ZodIssue): string {
-  const path = err.path.join(".");
+  const path = formatPath(err.path);
   const code = err.code;
   
-  let detail = err.message;
+  let detail = '';
   
   // 根据错误类型提供更具体的信息
-  if (code === 'invalid_type') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const issue = err as any;
-    detail = `期望类型 ${issue.expected}，实际收到 ${issue.received}`;
-  } else if (code === 'invalid_union') {
-    detail = '数据不匹配任何有效格式';
-  } else if (code === 'too_small') {
-    detail = '数组不能为空';
+  switch (code) {
+    case 'invalid_type': {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const issue = err as any;
+      const expected = translateType(issue.expected);
+      const received = translateType(issue.received);
+      detail = `类型错误：期望 ${expected}，实际为 ${received}`;
+      break;
+    }
+    case 'invalid_union':
+      detail = '格式错误：数据不符合任何有效的数据结构';
+      break;
+    case 'too_small':
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((err as any).type === 'array') {
+        detail = '数组不能为空，至少需要1个元素';
+      } else if ((err as any).type === 'string') {
+        detail = '字符串不能为空';
+      } else {
+        detail = '值太小';
+      }
+      break;
+    case 'too_big':
+      detail = '值超出允许范围';
+      break;
+    case 'invalid_string':
+      detail = '字符串格式无效';
+      break;
+    case 'invalid_literal':
+      detail = `值必须为 ${JSON.stringify((err as z.ZodInvalidLiteralIssue).expected)}`;
+      break;
+    case 'unrecognized_keys':
+      detail = `包含未知字段：${(err as z.ZodUnrecognizedKeysIssue).keys.join(', ')}`;
+      break;
+    case 'invalid_enum_value':
+      detail = `无效的枚举值，允许的值：${(err as z.ZodInvalidEnumValueIssue).options.join(', ')}`;
+      break;
+    case 'custom':
+      detail = err.message || '自定义验证失败';
+      break;
+    default:
+      detail = err.message || '验证失败';
   }
   
-  return path ? `${path}: ${detail}` : detail;
+  return path ? `【${path}】${detail}` : detail;
 }
 
 /**

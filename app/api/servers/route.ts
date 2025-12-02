@@ -59,7 +59,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SubmitSuc
       if (missingServerId) {
         // Requirements 1.2: 缺少 serverId 返回 400
         return NextResponse.json(
-          { error: "Missing serverId" },
+          { error: "缺少服务器ID", hint: "请在请求体中提供 serverId 字段" },
           { status: 400 }
         );
       }
@@ -67,9 +67,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<SubmitSuc
       // Requirements 1.3: 数据验证失败返回 400，包含详细错误信息
       return NextResponse.json(
         { 
-          error: "Validation failed", 
+          error: "数据验证失败", 
           details: validation.errors,
-          hint: "请检查数据格式是否符合要求，常见问题：Mail字段应为boolean或null，Score字段应为string"
+          hint: "常见问题：1) Mail 字段应为 boolean 或 null；2) Score 字段应为 string；3) 确保所有必填字段都存在且类型正确"
         },
         { status: 400 }
       );
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SubmitSuc
     // 处理 JSON 解析错误
     if (error instanceof SyntaxError) {
       return NextResponse.json(
-        { error: "Invalid JSON" },
+        { error: "JSON 格式无效", hint: "请检查请求体是否为有效的 JSON 格式，常见问题：多个 JSON 对象需要用数组包裹 [obj1, obj2]" },
         { status: 400 }
       );
     }
