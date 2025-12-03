@@ -115,9 +115,7 @@ export default function AdminPage() {
     try {
       const res = await fetch("/api/servers")
       const data = await res.json()
-      if (data.success) {
-        setServers(data.data)
-      }
+      setServers(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("Failed to fetch servers:", error)
     } finally {
