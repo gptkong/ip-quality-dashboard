@@ -52,32 +52,25 @@ function InfoItem({
 export function InfoCard({ info }: InfoCardProps) {
   return (
     <div className="rounded-xl border border-border bg-card/50 backdrop-blur-sm p-3 h-full">
-      <div className="grid grid-cols-2 gap-x-4 gap-y-0">
-        {/* 左列 */}
-        <div>
-          <InfoItem label="ASN" value={info.ASN} mono />
-          <InfoItem label="类型" value={info.Type} />
-          <InfoItem label="组织" value={info.Organization} />
-          <InfoItem label="城市" value={info.City.Name} />
-        </div>
-
-        {/* 右列 */}
-        <div>
-          <InfoItem label="地区" value={info.Region.Name} />
-          <InfoItem label="大洲" value={info.Continent.Name} />
-          <InfoItem label="时区" value={info.TimeZone} />
-          <div className="flex items-center justify-between py-1.5">
-            <span className="text-xs text-muted-foreground">坐标</span>
-            <a
-              href={info.Map}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
-            >
-              <span className="text-[10px] font-mono">{info.DMS}</span>
-              <MapPin className="h-3 w-3" />
-            </a>
-          </div>
+      <div className="flex flex-col">
+        <InfoItem label="ASN" value={info.ASN} mono />
+        <InfoItem label="类型" value={info.Type} />
+        <InfoItem label="组织" value={info.Organization} />
+        <InfoItem label="城市" value={info.City.Name} />
+        <InfoItem label="地区" value={info.Region.Name} />
+        <InfoItem label="大洲" value={info.Continent.Name} />
+        <InfoItem label="时区" value={info.TimeZone} />
+        <div className="flex items-center justify-between py-1.5">
+          <span className="text-xs text-muted-foreground">坐标</span>
+          <a
+            href={info.Map}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+          >
+            <span className="text-[10px] font-mono">{info.DMS}</span>
+            <MapPin className="h-3 w-3" />
+          </a>
         </div>
       </div>
     </div>
