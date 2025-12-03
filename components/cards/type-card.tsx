@@ -12,8 +12,8 @@ function getTypeStyle(value: string) {
   const styleMap: Record<string, { bg: string; text: string; dot: string }> = {
     机房: { bg: "bg-red-500/10", text: "text-red-500", dot: "bg-red-500" },
     商业: { bg: "bg-amber-500/10", text: "text-amber-500", dot: "bg-amber-500" },
-    住宅: { bg: "bg-green-500/10", text: "text-green-500", dot: "bg-green-500" },
-    家宽: { bg: "bg-green-500/10", text: "text-green-500", dot: "bg-green-500" },
+    住宅: { bg: "bg-emerald-500/10", text: "text-emerald-500", dot: "bg-emerald-500" },
+    家宽: { bg: "bg-emerald-500/10", text: "text-emerald-500", dot: "bg-emerald-500" },
     教育: { bg: "bg-blue-500/10", text: "text-blue-500", dot: "bg-blue-500" },
     政府: { bg: "bg-purple-500/10", text: "text-purple-500", dot: "bg-purple-500" },
     移动: { bg: "bg-rose-500/10", text: "text-rose-500", dot: "bg-rose-500" },
@@ -25,10 +25,10 @@ function getTypeStyle(value: string) {
 function TypeRow({ provider, value }: { provider: string; value: string }) {
   const style = getTypeStyle(value)
   return (
-    <div className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-      <span className="text-xs text-muted-foreground">{provider}</span>
+    <div className="flex items-center justify-between py-3 border-b border-border/40 last:border-0 group hover:bg-muted/30 -mx-3 px-3 transition-colors">
+      <span className="text-xs font-medium text-muted-foreground">{provider}</span>
       <span className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-all",
         style.bg, style.text
       )}>
         <span className={cn("w-1.5 h-1.5 rounded-full", style.dot)} />
@@ -40,10 +40,10 @@ function TypeRow({ provider, value }: { provider: string; value: string }) {
 
 export function TypeCard({ type }: TypeCardProps) {
   return (
-    <div className="rounded-xl border border-border bg-card/50 backdrop-blur-sm p-4 space-y-4 h-full">
+    <div className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm p-5 space-y-6 h-full">
       {/* 使用类型 */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-medium text-foreground/90 mb-2">
+        <div className="flex items-center gap-2 text-xs font-semibold text-foreground/90 mb-3 uppercase tracking-wider">
           <Server className="h-3.5 w-3.5 text-primary" />
           使用类型
         </div>
@@ -56,7 +56,7 @@ export function TypeCard({ type }: TypeCardProps) {
 
       {/* 公司类型 */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-medium text-foreground/90 mb-2">
+        <div className="flex items-center gap-2 text-xs font-semibold text-foreground/90 mb-3 uppercase tracking-wider">
           <Building className="h-3.5 w-3.5 text-primary" />
           公司类型
         </div>

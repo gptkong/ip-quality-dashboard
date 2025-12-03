@@ -60,17 +60,17 @@ export function MediaCard({ media }: MediaCardProps) {
     switch (status) {
       case "解锁":
         return {
-          bg: "bg-green-500/5 border-green-500/20 hover:bg-green-500/10",
-          icon: <Check className="h-3.5 w-3.5 text-green-500" />,
-          text: "text-green-500",
-          badge: "bg-green-500/15 text-green-500",
+          bg: "bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10",
+          icon: <Check className="h-3.5 w-3.5 text-emerald-500" />,
+          text: "text-emerald-500",
+          badge: "bg-emerald-500/15 text-emerald-500",
         }
       case "屏蔽":
         return {
-          bg: "bg-red-500/5 border-red-500/20 hover:bg-red-500/10",
-          icon: <X className="h-3.5 w-3.5 text-red-500" />,
-          text: "text-red-500",
-          badge: "bg-red-500/15 text-red-500",
+          bg: "bg-rose-500/5 border-rose-500/20 hover:bg-rose-500/10",
+          icon: <X className="h-3.5 w-3.5 text-rose-500" />,
+          text: "text-rose-500",
+          badge: "bg-rose-500/15 text-rose-500",
         }
       case "仅APP":
         return {
@@ -103,8 +103,8 @@ export function MediaCard({ media }: MediaCardProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card/50 backdrop-blur-sm p-3">
-      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3 gap-2">
+    <div className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm p-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3 gap-3">
         {Object.entries(media).map(([key, value]) => {
           const style = getStatusStyle(value.Status)
           const config = mediaConfig[key]
@@ -112,28 +112,28 @@ export function MediaCard({ media }: MediaCardProps) {
             <div
               key={key}
               className={cn(
-                "group relative flex items-center gap-2.5 rounded-lg border p-2.5 transition-all hover:scale-[1.02]",
+                "group relative flex items-center gap-3 rounded-xl border p-3 transition-all hover:scale-[1.02] hover:shadow-md",
                 style.bg
               )}
             >
               {/* 服务图标 */}
-              <div className="shrink-0 w-9 h-9 rounded-lg bg-background/60 flex items-center justify-center border border-border/30">
+              <div className="shrink-0 w-10 h-10 rounded-xl bg-background/60 flex items-center justify-center border border-border/30 shadow-sm">
                 {renderIcon(key)}
               </div>
 
               {/* 服务信息 */}
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold truncate mb-0.5">{config?.label || key}</p>
-                <div className="flex items-center gap-1">
+                <p className="text-xs font-semibold truncate mb-1 text-foreground/90">{config?.label || key}</p>
+                <div className="flex items-center gap-1.5">
                   <span className={cn(
-                    "inline-flex items-center gap-0.5 rounded px-1 py-0.5 text-[9px] font-medium",
+                    "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium",
                     style.badge
                   )}>
                     {style.icon}
                     {value.Status}
                   </span>
                   {value.Region && (
-                    <span className="text-[9px] text-muted-foreground truncate">{value.Region}</span>
+                    <span className="text-[10px] text-muted-foreground truncate max-w-[60px]">{value.Region}</span>
                   )}
                 </div>
               </div>
