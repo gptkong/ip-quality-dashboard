@@ -10,21 +10,35 @@ export interface PlatformStatus {
 export interface PlatformUnlockData {
   ipv4Asn?: string;
   ipv4Location?: string;
-  platforms: PlatformStatus[];
+  ipv6Asn?: string;
+  ipv6Location?: string;
+  platforms: PlatformStatus[]; // IPV4 平台数据
+  ipv6Platforms?: PlatformStatus[]; // IPV6 平台数据
   testTime?: string;
   duration?: string;
+}
+
+/**
+ * 移除 ANSI 颜色控制码
+ */
+function stripAnsiCodes(text: string): string {
+  // 匹配 ANSI 转义序列: ESC[ ... m 或 \[数字m 格式
+  return text.replace(/\x1b\[[0-9;]*m|\[\d+m/g, '');
 }
 
 /**
  * 解析 goecs 测试结果文本
  */
 export function parseGoecsResult(content: string): PlatformUnlockData {
-  const lines = content.split('\n');
+  // 先清理 ANSI 颜色码
+  const cleanContent = stripAnsiCodes(content);
+  const lines = cleanContent.split('\n');
   const result: PlatformUnlockData = {
     platforms: [],
   };
 
   let inPlatformSection = false;
+  let currentIpVersion: 'ipv4' | 'ipv6' = 'ipv4';
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -34,6 +48,23 @@ export function parseGoecsResult(content: string): PlatformUnlockData {
       result.ipv4Asn = trimmed.split(':').slice(1).join(':').trim();
     } else if (trimmed.startsWith('IPV4 Location')) {
       result.ipv4Location = trimmed.split(':').slice(1).join(':').trim();
+    } else if (trimmed.startsWith('IPV6 ASN')) {
+      result.ipv6Asn = trimmed.split(':').slice(1).join(':').trim();
+    } else if (trimmed.startsWith('IPV6 Location')) {
+      result.ipv6Location = trimmed.split(':').slice(1).join(':').trim();
+    }
+
+    // 检测 IPV4/IPV6 区块标记
+    if (trimmed === 'IPV4:' || trimmed.match(/^IPV4\s*[:：]?\s*$/i)) {
+      currentIpVersion = 'ipv4';
+      continue;
+    }
+    if (trimmed === 'IPV6:' || trimmed.match(/^IPV6\s*[:：]?\s*$/i)) {
+      currentIpVersion = 'ipv6';
+      if (!result.ipv6Platforms) {
+        result.ipv6Platforms = [];
+      }
+      continue;
     }
 
     // 检测平台区块开始
@@ -42,7 +73,7 @@ export function parseGoecsResult(content: string): PlatformUnlockData {
       continue;
     }
 
-    // 检测区块结束
+    // 检测区块结束（遇到分隔线）
     if (trimmed.startsWith('---') && inPlatformSection) {
       inPlatformSection = false;
       continue;
@@ -52,7 +83,14 @@ export function parseGoecsResult(content: string): PlatformUnlockData {
     if (inPlatformSection && trimmed && !trimmed.startsWith('=')) {
       const platform = parsePlatformLine(trimmed);
       if (platform) {
-        result.platforms.push(platform);
+        if (currentIpVersion === 'ipv6') {
+          if (!result.ipv6Platforms) {
+            result.ipv6Platforms = [];
+          }
+          result.ipv6Platforms.push(platform);
+        } else {
+          result.platforms.push(platform);
+        }
       }
     }
 
@@ -76,7 +114,8 @@ function parsePlatformLine(line: string): PlatformStatus | null {
   if (!match) return null;
 
   const [, name, statusRaw, rest] = match;
-  const status = statusRaw.toUpperCase() as "YES" | "NO" | "Banned";
+  const upperStatus = statusRaw.toUpperCase();
+  const status = (upperStatus === 'BANNED' ? 'Banned' : upperStatus) as "YES" | "NO" | "Banned";
 
   const result: PlatformStatus = {
     name: name.trim(),
