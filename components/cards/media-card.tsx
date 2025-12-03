@@ -133,7 +133,9 @@ export function MediaCard({ media }: MediaCardProps) {
                     {value.Status}
                   </span>
                   {value.Region && (
-                    <span className="text-[10px] text-muted-foreground truncate max-w-[60px]">{value.Region}</span>
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-500 border border-blue-500/20 truncate max-w-[80px]">
+                      {value.Region}
+                    </span>
                   )}
                 </div>
               </div>
