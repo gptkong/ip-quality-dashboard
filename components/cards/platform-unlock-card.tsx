@@ -140,6 +140,13 @@ export function PlatformUnlockCard({
                   </span>
                 )}
               </div>
+
+              {/* 备注信息 */}
+              {platform.note && (
+                <p className="text-[10px] text-muted-foreground truncate" title={platform.note}>
+                  {platform.note}
+                </p>
+              )}
             </div>
           );
         })}
