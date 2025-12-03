@@ -123,14 +123,14 @@ else
     if [ "$GOECS_HTTP_CODE" = "200" ]; then
         echo "🎉 跨国平台解锁数据上传成功！"
         echo "   响应: $GOECS_BODY"
+        # 上传成功后清理临时文件
+        rm -f "$GOECS_RESULT_FILE" /tmp/goecs.sh
     else
         echo "❌ 跨国平台解锁数据上传失败 (HTTP $GOECS_HTTP_CODE)"
         echo "   响应: $GOECS_BODY"
+        echo "   临时文件保留在: $GOECS_RESULT_FILE"
     fi
 fi
-
-# 清理临时文件
-rm -f "$GOECS_RESULT_FILE" /tmp/goecs.sh
 
 echo ""
 echo "✨ 所有检测任务完成！"
