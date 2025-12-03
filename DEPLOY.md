@@ -13,7 +13,7 @@
 2. 点击 "Storage" -> "Create Database"
 3. 选择 "Postgres" -> "Continue"
 4. 选择区域（建议选择离用户近的区域）
-5. 创建完成后，复制 `POSTGRES_URL` 连接字符串
+5. 创建完成后，复制 `DATABASE_URL` 连接字符串
 
 ### 2. 导入项目
 
@@ -27,7 +27,7 @@
 
 | 变量名 | 说明 |
 |--------|------|
-| `POSTGRES_URL` | Vercel Postgres 连接字符串（如果关联了 Storage 会自动添加） |
+| `DATABASE_URL` | Vercel Postgres 连接字符串（如果关联了 Storage 会自动添加） |
 | `API_AUTH_TOKEN` | API 鉴权 Token，用于保护数据上传接口 |
 
 ### 4. 初始化数据库表结构
@@ -36,11 +36,11 @@
 
 ```bash
 # Windows PowerShell
-$env:POSTGRES_URL="your-postgres-url"
+$env:DATABASE_URL="your-postgres-url"
 pnpm db:push
 
 # Linux/Mac
-POSTGRES_URL="your-postgres-url" pnpm db:push
+DATABASE_URL="your-postgres-url" pnpm db:push
 ```
 
 或者在 Vercel 部署后，使用 Vercel CLI：
@@ -78,7 +78,7 @@ API_TOKEN="your-api-token"
 cp .env.example .env.local
 
 # 编辑 .env.local，填入你的数据库连接字符串
-# POSTGRES_URL=postgres://...
+# DATABASE_URL=postgres://...
 
 # 推送表结构到数据库
 pnpm db:push
@@ -105,7 +105,7 @@ pnpm db:studio    # 打开 Drizzle Studio 查看数据
 **Q: 部署后 API 返回 500 错误？**
 
 A: 检查 Vercel 日志，确认：
-- `POSTGRES_URL` 环境变量已正确设置
+- `DATABASE_URL` 环境变量已正确设置
 - 数据库表结构已创建（运行 `pnpm db:push`）
 
 **Q: 如何查看生产数据库？**
