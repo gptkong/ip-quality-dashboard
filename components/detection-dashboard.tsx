@@ -7,7 +7,8 @@ import { useServers } from "@/hooks/use-servers"
 import { useToast } from "@/hooks/use-toast"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Server, RefreshCw, Menu, ChevronLeft, ChevronRight } from "lucide-react"
+import { Server, RefreshCw, Menu, ChevronLeft, ChevronRight, Settings } from "lucide-react"
+import Link from "next/link"
 import type { ServerWithMeta } from "@/lib/mock-data"
 
 function ServerListSkeleton() {
@@ -160,6 +161,13 @@ export function DetectionDashboard() {
             >
               <RefreshCw className={`h-4 w-4 text-muted-foreground ${isLoading ? 'animate-spin' : ''}`} />
             </button>
+            <Link
+              href="/admin"
+              className="p-1.5 rounded-md hover:bg-muted transition-colors"
+              title="服务器管理"
+            >
+              <Settings className="h-4 w-4 text-muted-foreground" />
+            </Link>
             <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
           </div>
         </div>

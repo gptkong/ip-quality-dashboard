@@ -61,13 +61,18 @@ export function ServerList({ servers, selectedServer, onSelectServer, isMobile }
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="font-mono text-sm font-medium text-foreground truncate">{ip}</p>
+                      <p className="font-mono text-sm font-medium text-foreground truncate">
+                        {server.remark || ip}
+                      </p>
                       {hasDualStack && (
                         <span className="shrink-0 px-1 py-0.5 text-[10px] font-medium rounded bg-purple-500/20 text-purple-400">
                           双栈
                         </span>
                       )}
                     </div>
+                    {server.remark && (
+                      <p className="font-mono text-xs text-muted-foreground truncate">{ip}</p>
+                    )}
                     <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Globe className="h-3 w-3" />
                       <span className="truncate">{firstData.Info[0].Organization}</span>

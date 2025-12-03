@@ -87,6 +87,7 @@ export type ServerDataOrArray = ServerData | ServerData[];
 // 扩展类型定义 - 服务器数据带元数据
 export interface ServerWithMeta {
   id: string; // 服务器唯一标识
+  remark?: string | null; // 服务器备注名称
   data: ServerDataOrArray; // 完整检测数据（支持双栈）
   createdAt: string; // 首次记录时间
   updatedAt: string; // 最后更新时间

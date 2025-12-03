@@ -80,6 +80,7 @@ export async function getAllServers(): Promise<ServerWithMeta[]> {
     if (latestRecord.length > 0) {
       result.push({
         id: server.id,
+        remark: server.remark,
         data: JSON.parse(latestRecord[0].data) as ServerDataOrArray,
         createdAt: server.createdAt.toISOString(),
         updatedAt: server.updatedAt.toISOString(),
@@ -125,8 +126,25 @@ export async function getServerById(serverId: string): Promise<ServerWithMeta | 
   
   return {
     id: server.id,
+    remark: server.remark,
     data: JSON.parse(latestRecord[0].data) as ServerDataOrArray,
     createdAt: server.createdAt.toISOString(),
     updatedAt: server.updatedAt.toISOString(),
   };
+}
+
+/**
+ * 更新服务器备注
+ * 
+ * @param serverId 服务器唯一标识
+ * @param remark 备注内容
+ * @returns 是否更新成功
+ */
+export async function updateServerRemark(serverId: string, remark: string | null): Promise<boolean> {
+  const result = await db
+    .update(servers)
+    .set({ remark, updatedAt: new Date() })
+    .where(eq(servers.id, serverId));
+  
+  return (result.rowCount ?? 0) > 0;
 }
