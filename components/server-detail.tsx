@@ -171,9 +171,9 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
       {/* Scrollable Content */}
       <div className="flex-1 min-h-0">
         <ScrollArea className="h-full" ref={scrollContainerRef}>
-          <div className="p-4 md:p-5 space-y-4">
+          <div className="p-4 md:p-5 space-y-6">
             {/* 第一行：基础信息 + IP类型 + 风险评分 */}
-            <section ref={(el) => { sectionRefs.current["info"] = el; sectionRefs.current["type"] = el; sectionRefs.current["score"] = el }} className="scroll-mt-4">
+            <section ref={(el) => { sectionRefs.current["info"] = el; sectionRefs.current["type"] = el; sectionRefs.current["score"] = el }} className="scroll-mt-2 pt-2">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 {/* 基础信息 - 占据更多空间 */}
                 <div className="lg:col-span-5">
@@ -194,19 +194,19 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
             </section>
 
             {/* 第二行：风险因子 */}
-            <section ref={(el) => { sectionRefs.current["factor"] = el }} className="scroll-mt-4">
+            <section ref={(el) => { sectionRefs.current["factor"] = el }} className="scroll-mt-2 pt-2">
               <SectionHeader icon={Fingerprint} title="风险因子" />
               <FactorCard factor={server.Factor[0]} />
             </section>
 
             {/* 第三行：流媒体 + 邮局连通 */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              <section ref={(el) => { sectionRefs.current["media"] = el }} className="scroll-mt-4">
+              <section ref={(el) => { sectionRefs.current["media"] = el }} className="scroll-mt-2 pt-2">
                 <SectionHeader icon={Play} title="流媒体解锁" />
                 <MediaCard media={server.Media[0]} />
               </section>
 
-              <section ref={(el) => { sectionRefs.current["mail"] = el }} className="scroll-mt-4">
+              <section ref={(el) => { sectionRefs.current["mail"] = el }} className="scroll-mt-2 pt-2">
                 <SectionHeader icon={Mail} title="邮局连通性" />
                 <MailCard mail={server.Mail[0]} />
               </section>
