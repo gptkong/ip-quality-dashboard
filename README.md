@@ -2,6 +2,34 @@
 
 一个用于展示服务器 IP 质量检测结果的 Dashboard，支持 IP 质量评分、流媒体解锁检测、网络类型识别等多维度数据展示。
 
+## 📸 界面预览
+
+### 主界面
+![主界面](screenshot/01-homepage-full.png)
+
+### 功能模块
+
+| 基础信息 | 风险评分 |
+|:---:|:---:|
+| ![基础信息](screenshot/03-info-card.png) | ![风险评分](screenshot/04-score-card.png) |
+
+| IP 类型 | 风险因子 |
+|:---:|:---:|
+| ![IP类型](screenshot/05-type-card.png) | ![风险因子](screenshot/06-factor-card.png) |
+
+| 流媒体解锁 | 邮局连通性 |
+|:---:|:---:|
+| ![流媒体解锁](screenshot/07-media-card.png) | ![邮局连通性](screenshot/08-mail-card.png) |
+
+### 跨国平台解锁
+![跨国平台解锁](screenshot/09-platform-unlock-card.png)
+
+### 管理后台
+
+| 登录页面 | 服务器管理 |
+|:---:|:---:|
+| ![管理后台登录](screenshot/10-admin-login.png) | ![服务器管理](screenshot/11-admin-dashboard.png) |
+
 ## ✨ 功能特性
 
 - 📊 **IP 质量评分** - 综合评估 IP 地址质量
