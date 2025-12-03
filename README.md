@@ -29,7 +29,7 @@
 
 | 变量名 | 必填 | 说明 |
 |--------|:----:|------|
-| `DATABASE_URL` | ✅ | Vercel Postgres 连接字符串（关联 Storage 后自动添加） |
+| `POSTGRES_URL` | ✅ | Vercel Postgres 连接字符串（关联 Storage 后自动添加） |
 | `API_AUTH_TOKEN` | ✅ | API 鉴权 Token，用于保护数据上传接口 |
 | `ADMIN_PASSWORD` | ✅ | 管理后台登录密码 |
 
@@ -106,7 +106,7 @@ pnpm install
 cp .env.example .env
 
 # 编辑 .env 填入配置
-# DATABASE_URL=postgres://...
+# POSTGRES_URL=postgres://...
 # API_AUTH_TOKEN=your-token
 # ADMIN_PASSWORD=your-password
 
