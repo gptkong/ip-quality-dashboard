@@ -129,14 +129,17 @@ export function PlatformUnlockCard({
                     {platform.region}
                   </span>
                 )}
+                {platform.type && (
+                  <span className={cn(
+                    "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border",
+                    platform.type.toLowerCase().includes('dns')
+                      ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                      : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                  )}>
+                    {platform.type.toLowerCase().includes('dns') ? 'DNS' : '原生'}
+                  </span>
+                )}
               </div>
-
-              {/* 类型标签 */}
-              {platform.type && (
-                <span className="text-[9px] text-muted-foreground truncate">
-                  [{platform.type}]
-                </span>
-              )}
             </div>
           );
         })}

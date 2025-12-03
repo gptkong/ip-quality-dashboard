@@ -124,7 +124,7 @@ export function MediaCard({ media }: MediaCardProps) {
               {/* 服务信息 */}
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold truncate mb-1 text-foreground/90">{config?.label || key}</p>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <span className={cn(
                     "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium",
                     style.badge
@@ -135,6 +135,16 @@ export function MediaCard({ media }: MediaCardProps) {
                   {value.Region && (
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-500 border border-blue-500/20 truncate max-w-[80px]">
                       {value.Region}
+                    </span>
+                  )}
+                  {value.Type && (
+                    <span className={cn(
+                      "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border",
+                      value.Type.toLowerCase().includes('dns')
+                        ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                        : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                    )}>
+                      {value.Type.toLowerCase().includes('dns') ? 'DNS' : '原生'}
                     </span>
                   )}
                 </div>
