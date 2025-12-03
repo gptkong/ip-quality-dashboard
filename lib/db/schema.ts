@@ -24,3 +24,24 @@ export const detectionRecords = pgTable(
     index("idx_detection_records_created_at").on(table.createdAt),
   ]
 );
+
+// 平台解锁记录表：存储跨国平台解锁检测结果
+export const platformUnlocks = pgTable(
+  "platform_unlocks",
+  {
+    id: serial("id").primaryKey(),
+    serverId: text("server_id")
+      .notNull()
+      .references(() => servers.id),
+    ipv4Asn: text("ipv4_asn"),           // ASN 信息
+    ipv4Location: text("ipv4_location"), // 地理位置
+    platforms: text("platforms").notNull(), // JSON 格式存储平台解锁状态
+    rawContent: text("raw_content"),     // 原始文本内容
+    testTime: timestamp("test_time", { withTimezone: true }), // 测试时间
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_platform_unlocks_server_id").on(table.serverId),
+    index("idx_platform_unlocks_created_at").on(table.createdAt),
+  ]
+);

@@ -195,7 +195,10 @@ export function DetectionDashboard() {
             </div>
             <main className="flex-1 overflow-hidden flex flex-col">
               <div className="flex-1 min-h-0">
-                <ServerDetail serverData={(selectedServer || servers[0]).data} />
+                <ServerDetail 
+                  serverData={(selectedServer || servers[0]).data}
+                  serverId={(selectedServer || servers[0]).id}
+                />
               </div>
               {/* 移动端底部导航 */}
               <div className="md:hidden shrink-0 border-t border-border bg-background px-4 py-3">

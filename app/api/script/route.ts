@@ -39,6 +39,7 @@ else
 fi
 
 RESULT_FILE="/tmp/ip-quality-result-\${SERVER_ID}.json"
+GOECS_RESULT_FILE="/tmp/goecs-result-\${SERVER_ID}.txt"
 
 echo "🔍 开始 IP 质量检测..."
 echo "   服务器 ID: $SERVER_ID"
@@ -74,16 +75,65 @@ HTTP_CODE=$(echo "$RESPONSE" | tail -1)
 BODY=$(echo "$RESPONSE" | sed '\$d')
 
 if [ "$HTTP_CODE" = "201" ]; then
-    echo "🎉 上传成功！"
+    echo "🎉 IP 质量检测上传成功！"
     echo "   响应: $BODY"
 else
-    echo "❌ 上传失败 (HTTP $HTTP_CODE)"
+    echo "❌ IP 质量检测上传失败 (HTTP $HTTP_CODE)"
     echo "   响应: $BODY"
-    exit 1
 fi
 
 # 清理临时文件
 rm -f "$RESULT_FILE"
+
+# ========== 跨国平台解锁检测 ==========
+echo ""
+echo "🌍 开始跨国平台解锁检测..."
+
+# 安装并运行 goecs
+export noninteractive=true
+curl -L https://raw.githubusercontent.com/oneclickvirt/ecs/master/goecs.sh -o /tmp/goecs.sh
+chmod +x /tmp/goecs.sh
+/tmp/goecs.sh install
+
+# 运行 goecs 测试（仅跨国平台解锁）
+goecs -basic=false -cpu=false -disk=false -email=false -memory=false -nt3=false -ping=false -security=false -speed=false -tgdc=false -web=false -backtrace=false -menu=false -ut=true > "$GOECS_RESULT_FILE" 2>&1
+
+# 检查 goecs 结果
+if [ ! -f "$GOECS_RESULT_FILE" ] || [ ! -s "$GOECS_RESULT_FILE" ]; then
+    echo "❌ goecs 检测失败：未生成结果文件"
+else
+    echo "✅ goecs 检测完成，准备上传..."
+    
+    # 读取结果内容
+    GOECS_CONTENT=$(cat "$GOECS_RESULT_FILE")
+    
+    # 构建 JSON payload
+    GOECS_PAYLOAD=$(jq -n --arg content "$GOECS_CONTENT" '{content: $content}')
+    
+    # 上传到平台解锁 API
+    PLATFORM_API_URL="${apiUrl}/\${SERVER_ID}/platform-unlock"
+    GOECS_RESPONSE=$(curl -s -w "\\n%{http_code}" -X POST "$PLATFORM_API_URL" \\
+        -H "Content-Type: application/json" \\
+        -H "Authorization: Bearer $AUTH_TOKEN" \\
+        -d "$GOECS_PAYLOAD")
+    
+    GOECS_HTTP_CODE=$(echo "$GOECS_RESPONSE" | tail -1)
+    GOECS_BODY=$(echo "$GOECS_RESPONSE" | sed '\$d')
+    
+    if [ "$GOECS_HTTP_CODE" = "200" ]; then
+        echo "🎉 跨国平台解锁数据上传成功！"
+        echo "   响应: $GOECS_BODY"
+    else
+        echo "❌ 跨国平台解锁数据上传失败 (HTTP $GOECS_HTTP_CODE)"
+        echo "   响应: $GOECS_BODY"
+    fi
+fi
+
+# 清理临时文件
+rm -f "$GOECS_RESULT_FILE" /tmp/goecs.sh
+
+echo ""
+echo "✨ 所有检测任务完成！"
 `;
 
   return new NextResponse(script, {

@@ -8,12 +8,15 @@ import { ScoreCard } from "./cards/score-card"
 import { FactorCard } from "./cards/factor-card"
 import { MediaCard } from "./cards/media-card"
 import { MailCard } from "./cards/mail-card"
-import { Clock, Globe2, Server, ShieldCheck, Fingerprint, Play, Mail, Network } from "lucide-react"
+import { PlatformUnlockCard } from "./cards/platform-unlock-card"
+import { usePlatformUnlock } from "@/hooks/use-platform-unlock"
+import { Clock, Globe2, Server, ShieldCheck, Fingerprint, Play, Mail, Network, Unlock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface ServerDetailProps {
   serverData: ServerDataOrArray
+  serverId?: string
 }
 
 // 标准化为数组
@@ -73,7 +76,7 @@ function SectionHeader({ icon: Icon, title, subtitle }: { icon: React.ElementTyp
   )
 }
 
-export function ServerDetail({ serverData }: ServerDetailProps) {
+export function ServerDetail({ serverData, serverId }: ServerDetailProps) {
   const dataArray = normalizeToArray(serverData)
   const isDualStack = dataArray.length > 1
   
@@ -84,6 +87,9 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({})
   const [activeTab, setActiveTab] = useState("info")
+  
+  // 获取平台解锁数据
+  const { data: platformUnlockData, loading: platformUnlockLoading } = usePlatformUnlock(serverId || null)
   
   // 当服务器数据变化时重置 IP 索引
   useEffect(() => {
@@ -242,6 +248,28 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
               <SectionHeader icon={Mail} title="邮局连通性" subtitle="常见邮件服务端口连通状态" />
               <MailCard mail={server.Mail[0]} />
             </section>
+
+            {/* 第五行：跨国平台解锁 */}
+            {serverId && (
+              <section ref={(el) => { sectionRefs.current["platform"] = el }} className="scroll-mt-24">
+                <SectionHeader icon={Unlock} title="跨国平台解锁" subtitle="跨国流媒体与服务平台访问支持" />
+                {platformUnlockLoading ? (
+                  <div className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm p-5">
+                    <div className="text-sm text-muted-foreground">加载中...</div>
+                  </div>
+                ) : platformUnlockData ? (
+                  <PlatformUnlockCard
+                    platforms={platformUnlockData.platforms}
+                    ipv4Asn={platformUnlockData.ipv4Asn}
+                    ipv4Location={platformUnlockData.ipv4Location}
+                  />
+                ) : (
+                  <div className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm p-5">
+                    <div className="text-sm text-muted-foreground">暂无跨国平台解锁数据</div>
+                  </div>
+                )}
+              </section>
+            )}
           </div>
         </ScrollArea>
       </div>
