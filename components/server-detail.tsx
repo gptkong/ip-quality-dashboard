@@ -8,7 +8,7 @@ import { ScoreCard } from "./cards/score-card"
 import { FactorCard } from "./cards/factor-card"
 import { MediaCard } from "./cards/media-card"
 import { MailCard } from "./cards/mail-card"
-import { Clock, Globe2, Server, ShieldCheck, Fingerprint, Play, Mail } from "lucide-react"
+import { Clock, Globe2, Server, ShieldCheck, Fingerprint, Play, Mail, Network } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -37,6 +37,18 @@ const sectionTabs = [
   { id: "media", label: "流媒体", icon: Play },
   { id: "mail", label: "邮局连通", icon: Mail },
 ]
+
+// 区块标题组件
+function SectionHeader({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
+        <Icon className="h-4 w-4 text-primary" />
+      </div>
+      <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+    </div>
+  )
+}
 
 export function ServerDetail({ serverData }: ServerDetailProps) {
   const dataArray = normalizeToArray(serverData)
@@ -88,46 +100,53 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
   }, [activeIpIndex])
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden bg-linear-to-b from-background to-muted/20">
       {/* Header Info */}
-      <div className="shrink-0 px-4 md:px-6 pt-3 md:pt-4 pb-3 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-        {/* IPv4/IPv6 切换 tabs（双栈时显示） */}
-        {isDualStack && (
-          <div className="mb-3 flex items-center gap-2">
-            <span className="text-xs text-muted-foreground mr-1">IP 版本:</span>
-            {dataArray.map((data, index) => {
-              const ip = data.Head[0].IP
-              const version = isIPv6(ip) ? 'IPv6' : 'IPv4'
-              return (
-                <button
-                  key={ip}
-                  onClick={() => setActiveIpIndex(index)}
-                  className={cn(
-                    "px-2.5 py-1 text-xs font-medium rounded-md transition-all",
-                    activeIpIndex === index
-                      ? version === 'IPv6'
-                        ? "bg-blue-500/20 text-blue-400 ring-1 ring-blue-500/30"
-                        : "bg-green-500/20 text-green-400 ring-1 ring-green-500/30"
-                      : "text-muted-foreground hover:bg-muted"
-                  )}
-                >
-                  {version}
-                </button>
-              )
-            })}
-            <span className="ml-2 font-mono text-xs text-muted-foreground truncate">
-              {head.IP}
-            </span>
+      <div className="shrink-0 px-4 md:px-6 pt-3 md:pt-4 pb-3 border-b border-border bg-background/95 backdrop-blur-sm">
+        {/* IP 信息头部 */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/10 ring-1 ring-primary/20">
+              <Network className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-mono text-sm font-semibold text-foreground">{head.IP}</p>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span>{head.Time}</span>
+              </div>
+            </div>
           </div>
-        )}
-        
-        <div className="mb-3 flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Clock className="h-3.5 w-3.5" />
-          <span className="text-xs">{head.Time}</span>
+          
+          {/* IPv4/IPv6 切换 tabs（双栈时显示） */}
+          {isDualStack && (
+            <div className="flex items-center gap-1.5 bg-muted/50 rounded-lg p-1">
+              {dataArray.map((data, index) => {
+                const ip = data.Head[0].IP
+                const version = isIPv6(ip) ? 'IPv6' : 'IPv4'
+                return (
+                  <button
+                    key={ip}
+                    onClick={() => setActiveIpIndex(index)}
+                    className={cn(
+                      "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                      activeIpIndex === index
+                        ? version === 'IPv6'
+                          ? "bg-blue-500 text-white shadow-sm"
+                          : "bg-green-500 text-white shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/80"
+                    )}
+                  >
+                    {version}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Section Tab Navigation */}
-        <div className="flex gap-1 overflow-x-auto scrollbar-none -mx-1 px-1">
+        <div className="flex gap-1 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5">
           {sectionTabs.map((tab) => {
             const Icon = tab.icon
             return (
@@ -135,7 +154,7 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
                 key={tab.id}
                 onClick={() => scrollToSection(tab.id)}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md transition-all whitespace-nowrap",
+                  "flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-all whitespace-nowrap",
                   activeTab === tab.id
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -152,30 +171,46 @@ export function ServerDetail({ serverData }: ServerDetailProps) {
       {/* Scrollable Content */}
       <div className="flex-1 min-h-0">
         <ScrollArea className="h-full" ref={scrollContainerRef}>
-          <div className="p-4 md:p-6 space-y-4 md:space-y-6">
-          <section ref={(el) => { sectionRefs.current["info"] = el }} className="scroll-mt-4">
-            <InfoCard info={server.Info[0]} />
-          </section>
+          <div className="p-4 md:p-5 space-y-4">
+            {/* 第一行：基础信息 + IP类型 + 风险评分 */}
+            <section ref={(el) => { sectionRefs.current["info"] = el; sectionRefs.current["type"] = el; sectionRefs.current["score"] = el }} className="scroll-mt-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                {/* 基础信息 - 占据更多空间 */}
+                <div className="lg:col-span-5">
+                  <SectionHeader icon={Globe2} title="基础信息" />
+                  <InfoCard info={server.Info[0]} />
+                </div>
+                {/* IP 类型 */}
+                <div className="lg:col-span-3">
+                  <SectionHeader icon={Server} title="IP 类型" />
+                  <TypeCard type={server.Type[0]} />
+                </div>
+                {/* 风险评分 */}
+                <div className="lg:col-span-4">
+                  <SectionHeader icon={ShieldCheck} title="风险评分" />
+                  <ScoreCard score={server.Score[0]} />
+                </div>
+              </div>
+            </section>
 
-          <section ref={(el) => { sectionRefs.current["type"] = el }} className="scroll-mt-4">
-            <TypeCard type={server.Type[0]} />
-          </section>
+            {/* 第二行：风险因子 */}
+            <section ref={(el) => { sectionRefs.current["factor"] = el }} className="scroll-mt-4">
+              <SectionHeader icon={Fingerprint} title="风险因子" />
+              <FactorCard factor={server.Factor[0]} />
+            </section>
 
-          <section ref={(el) => { sectionRefs.current["score"] = el }} className="scroll-mt-4">
-            <ScoreCard score={server.Score[0]} />
-          </section>
+            {/* 第三行：流媒体 + 邮局连通 */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              <section ref={(el) => { sectionRefs.current["media"] = el }} className="scroll-mt-4">
+                <SectionHeader icon={Play} title="流媒体解锁" />
+                <MediaCard media={server.Media[0]} />
+              </section>
 
-          <section ref={(el) => { sectionRefs.current["factor"] = el }} className="scroll-mt-4">
-            <FactorCard factor={server.Factor[0]} />
-          </section>
-
-          <section ref={(el) => { sectionRefs.current["media"] = el }} className="scroll-mt-4">
-            <MediaCard media={server.Media[0]} />
-          </section>
-
-          <section ref={(el) => { sectionRefs.current["mail"] = el }} className="scroll-mt-4">
-            <MailCard mail={server.Mail[0]} />
-          </section>
+              <section ref={(el) => { sectionRefs.current["mail"] = el }} className="scroll-mt-4">
+                <SectionHeader icon={Mail} title="邮局连通性" />
+                <MailCard mail={server.Mail[0]} />
+              </section>
+            </div>
           </div>
         </ScrollArea>
       </div>

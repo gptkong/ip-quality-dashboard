@@ -1,4 +1,5 @@
-import { MapPin, Building2, Globe2, Map } from "lucide-react"
+import { MapPin, ExternalLink } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface InfoCardProps {
   info: {
@@ -31,82 +32,52 @@ interface InfoCardProps {
   }
 }
 
+function InfoItem({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string
+  value: string
+  mono?: boolean
+}) {
+  return (
+    <div className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className={cn("text-xs font-medium", mono && "font-mono")}>{value || "-"}</span>
+    </div>
+  )
+}
+
 export function InfoCard({ info }: InfoCardProps) {
   return (
-    <div className="space-y-4">
-      {/* 基本信息 */}
-      <div className="rounded-lg border border-border bg-card p-4">
-        <div className="flex items-center gap-2 text-sm font-medium mb-3">
-          <Globe2 className="h-4 w-4 text-primary" />
-          网络信息
+    <div className="rounded-xl border border-border bg-card/50 backdrop-blur-sm p-3 h-full">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-0">
+        {/* 左列 */}
+        <div>
+          <InfoItem label="ASN" value={info.ASN} mono />
+          <InfoItem label="类型" value={info.Type} />
+          <InfoItem label="组织" value={info.Organization} />
+          <InfoItem label="城市" value={info.City.Name} />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div>
-            <p className="text-xs text-muted-foreground mb-0.5">ASN</p>
-            <p className="font-mono text-sm font-medium">{info.ASN}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-0.5">类型</p>
-            <p className="text-sm font-medium">{info.Type}</p>
-          </div>
-          <div className="col-span-2">
-            <p className="text-xs text-muted-foreground mb-0.5">组织</p>
-            <p className="text-sm font-medium truncate">{info.Organization}</p>
-          </div>
-        </div>
-      </div>
 
-      {/* 地理位置 */}
-      <div className="rounded-lg border border-border bg-card p-4">
-        <div className="flex items-center gap-2 text-sm font-medium mb-3">
-          <MapPin className="h-4 w-4 text-primary" />
-          地理位置
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div>
-            <p className="text-xs text-muted-foreground mb-0.5">城市</p>
-            <p className="text-sm font-medium">{info.City.Name || "-"}</p>
+        {/* 右列 */}
+        <div>
+          <InfoItem label="地区" value={info.Region.Name} />
+          <InfoItem label="大洲" value={info.Continent.Name} />
+          <InfoItem label="时区" value={info.TimeZone} />
+          <div className="flex items-center justify-between py-1.5">
+            <span className="text-xs text-muted-foreground">坐标</span>
+            <a
+              href={info.Map}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+            >
+              <span className="text-[10px] font-mono">{info.DMS}</span>
+              <MapPin className="h-3 w-3" />
+            </a>
           </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-0.5">地区</p>
-            <p className="text-sm font-medium">{info.Region.Name || "-"}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-0.5">大洲</p>
-            <p className="text-sm font-medium">{info.Continent.Name}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-0.5">时区</p>
-            <p className="text-sm font-medium">{info.TimeZone}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* 注册地 & 坐标 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="rounded-lg border border-border bg-card p-4">
-          <div className="flex items-center gap-2 text-sm font-medium mb-3">
-            <Building2 className="h-4 w-4 text-primary" />
-            注册地
-          </div>
-          <p className="text-sm font-medium">
-            {info.RegisteredRegion.Name} ({info.RegisteredRegion.Code})
-          </p>
-        </div>
-        <div className="rounded-lg border border-border bg-card p-4">
-          <div className="flex items-center gap-2 text-sm font-medium mb-3">
-            <Map className="h-4 w-4 text-primary" />
-            坐标
-          </div>
-          <p className="text-xs font-mono text-muted-foreground mb-1">{info.DMS}</p>
-          <a
-            href={info.Map}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-primary hover:underline"
-          >
-            在地图上查看 →
-          </a>
         </div>
       </div>
     </div>

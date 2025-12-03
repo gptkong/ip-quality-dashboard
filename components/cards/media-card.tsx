@@ -60,27 +60,31 @@ export function MediaCard({ media }: MediaCardProps) {
     switch (status) {
       case "解锁":
         return {
-          bg: "bg-green-500/10 border-green-500/20 hover:bg-green-500/15",
+          bg: "bg-green-500/5 border-green-500/20 hover:bg-green-500/10",
           icon: <Check className="h-3.5 w-3.5 text-green-500" />,
           text: "text-green-500",
+          badge: "bg-green-500/15 text-green-500",
         }
       case "屏蔽":
         return {
-          bg: "bg-red-500/10 border-red-500/20 hover:bg-red-500/15",
+          bg: "bg-red-500/5 border-red-500/20 hover:bg-red-500/10",
           icon: <X className="h-3.5 w-3.5 text-red-500" />,
           text: "text-red-500",
+          badge: "bg-red-500/15 text-red-500",
         }
       case "仅APP":
         return {
-          bg: "bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/15",
+          bg: "bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10",
           icon: <AlertCircle className="h-3.5 w-3.5 text-amber-500" />,
           text: "text-amber-500",
+          badge: "bg-amber-500/15 text-amber-500",
         }
       default:
         return {
-          bg: "bg-muted/50 border-border hover:bg-muted",
+          bg: "bg-muted/30 border-border hover:bg-muted/50",
           icon: null,
           text: "text-muted-foreground",
+          badge: "bg-muted text-muted-foreground",
         }
     }
   }
@@ -90,7 +94,7 @@ export function MediaCard({ media }: MediaCardProps) {
     if (!config) return null
 
     if (config.icon === "disney") {
-      return <DisneyPlusIcon className={cn("h-7 w-7", config.color)} />
+      return <DisneyPlusIcon className={cn("h-6 w-6", config.color)} />
     }
     if (config.icon === "netflix") {
       return <NetflixIcon className={cn("h-5 w-5", config.color)} />
@@ -99,50 +103,44 @@ export function MediaCard({ media }: MediaCardProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-      {Object.entries(media).map(([key, value]) => {
-        const style = getStatusStyle(value.Status)
-        const config = mediaConfig[key]
-        return (
-          <div
-            key={key}
-            className={cn(
-              "flex items-center gap-3 rounded-lg border p-3 transition-colors",
-              style.bg
-            )}
-          >
-            {/* 服务图标 */}
-            <div className="shrink-0 w-10 h-10 rounded-lg bg-background/80 flex items-center justify-center border border-border/50">
-              {renderIcon(key)}
-            </div>
-
-            {/* 服务信息 */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-medium truncate">{config?.label || key}</p>
-                <span className={cn("shrink-0 text-xs font-medium", style.text)}>
-                  {value.Status}
-                </span>
+    <div className="rounded-xl border border-border bg-card/50 backdrop-blur-sm p-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3 gap-2">
+        {Object.entries(media).map(([key, value]) => {
+          const style = getStatusStyle(value.Status)
+          const config = mediaConfig[key]
+          return (
+            <div
+              key={key}
+              className={cn(
+                "group relative flex items-center gap-2.5 rounded-lg border p-2.5 transition-all hover:scale-[1.02]",
+                style.bg
+              )}
+            >
+              {/* 服务图标 */}
+              <div className="shrink-0 w-9 h-9 rounded-lg bg-background/60 flex items-center justify-center border border-border/30">
+                {renderIcon(key)}
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                {value.Region && <span>{value.Region}</span>}
-                {value.Region && value.Type && <span>·</span>}
-                {value.Type && <span>{value.Type}</span>}
+
+              {/* 服务信息 */}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold truncate mb-0.5">{config?.label || key}</p>
+                <div className="flex items-center gap-1">
+                  <span className={cn(
+                    "inline-flex items-center gap-0.5 rounded px-1 py-0.5 text-[9px] font-medium",
+                    style.badge
+                  )}>
+                    {style.icon}
+                    {value.Status}
+                  </span>
+                  {value.Region && (
+                    <span className="text-[9px] text-muted-foreground truncate">{value.Region}</span>
+                  )}
+                </div>
               </div>
             </div>
-
-            {/* 状态图标 */}
-            <div className={cn(
-              "shrink-0 w-6 h-6 rounded-full flex items-center justify-center",
-              value.Status === "解锁" ? "bg-green-500/20" :
-              value.Status === "屏蔽" ? "bg-red-500/20" :
-              value.Status === "仅APP" ? "bg-amber-500/20" : "bg-muted"
-            )}>
-              {style.icon}
-            </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }

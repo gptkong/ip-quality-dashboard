@@ -178,7 +178,7 @@ export function DetectionDashboard() {
         ) : (
           <>
             {/* 桌面端侧边栏 */}
-            <div className="hidden md:block">
+            <div className="hidden md:flex h-full overflow-hidden">
               <ServerList
                 servers={servers}
                 selectedServer={selectedServer || servers[0]}

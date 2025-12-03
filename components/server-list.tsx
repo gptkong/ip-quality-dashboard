@@ -29,11 +29,10 @@ export function ServerList({ servers, selectedServer, onSelectServer, isMobile }
   return (
     <aside className={cn(
       "shrink-0 bg-sidebar",
-      isMobile ? "w-full h-full" : "w-72 border-r border-border"
+      isMobile ? "w-full h-full" : "w-72 h-full border-r border-border"
     )}>
       <ScrollArea className="h-full">
       <div className="p-4">
-        <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">服务器列表</h2>
         <div className="space-y-2">
           {servers.map((server) => {
             const firstData = getFirstData(server.data)
