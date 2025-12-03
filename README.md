@@ -185,7 +185,7 @@ pnpm db:migrate   # 执行数据库迁移
 本项目的检测功能基于以下优秀的开源项目：
 
 - [IPQuality](https://github.com/xykt/IPQuality) - IP 质量检测脚本
-- [ecs](https://github.com/oneclickvirt/ecs) - 跨国平台解锁检测工具 (goecs)
+- [ecs](https://github.com/oneclickvirt/ecs) - 融合怪GO版本
 
 感谢这些项目的作者和贡献者！
 
